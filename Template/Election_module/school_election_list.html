@@ -1,0 +1,387 @@
+{%extends 'Static/base.html'%}
+{% load static %}
+
+{% block title %}School Elections{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #2563eb;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --light-bg: #f8fafc;
+        --card-bg: #ffffff;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --text-muted: #94a3b8;
+        --border-color: #e2e8f0;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    }
+
+    body {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .page-title {
+        text-align: center;
+        font-size: 3rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--text-primary) 0%, var(--brand-green) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .page-subtitle {
+        text-align: center;
+        font-size: 1.25rem;
+        color: var(--text-secondary);
+        margin-bottom: 3rem;
+        font-weight: 500;
+    }
+
+    .elections-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .election-card {
+        background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .election-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, var(--success-color), #10b981);
+    }
+
+    .election-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-xl);
+        border-color: var(--success-color);
+    }
+
+    .election-title-main {
+        color: var(--success-color);
+        font-weight: 700;
+        font-size: 1.75rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .election-description {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 1.5rem;
+    }
+
+    .status-active {
+        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        color: #065f46;
+        border: 1px solid #6ee7b7;
+    }
+
+    .status-upcoming {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        color: #92400e;
+        border: 1px solid #fcd34d;
+    }
+
+    .status-ended {
+        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        color: #991b1b;
+        border: 1px solid #fca5a5;
+    }
+
+    .election-info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .info-box {
+        background: white;
+        border-radius: 12px;
+        padding: 1rem;
+        border: 1px solid var(--border-color);
+        text-align: center;
+    }
+
+    .info-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.25rem;
+    }
+
+    .info-value {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-election {
+        background: var(--brand-green, #0b6e3b);
+        color: #fff;
+        border: 1px solid var(--brand-green-dark, #075a30);
+        padding: 0.6rem 1.25rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s ease;
+    }
+
+    .btn-election:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-xl);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-secondary {
+        background: #6b7280;
+        border-color: #4b5563;
+    }
+
+    .btn-disabled {
+        background: #9ca3af;
+        border-color: #6b7280;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    .btn-disabled:hover {
+        transform: none;
+        box-shadow: var(--shadow-md);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: linear-gradient(135deg, var(--light-bg) 0%, #f1f5f9 100%);
+        border-radius: 20px;
+        border: 1px solid var(--border-color);
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        color: var(--text-muted);
+    }
+
+    .empty-state h3 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+    }
+
+    .empty-state p {
+        font-size: 1.125rem;
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+    }
+
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 2rem;
+            letter-spacing: 1px;
+        }
+
+        .page-subtitle {
+            font-size: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .election-info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn-election {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="page-title">
+        <i class="fas fa-vote-yea"></i> School Elections
+    </h1>
+    <p class="page-subtitle">Participate in student council elections and choose your representatives</p>
+
+    {% if elections %}
+        <div class="elections-grid">
+            {% for election in elections %}
+            <div class="election-card">
+                <div class="election-title-main">
+                    <i class="fas fa-poll"></i> {{ election.title }}
+                </div>
+                {% if election.description %}
+                <p class="election-description">{{ election.description }}</p>
+                {% endif %}
+
+                <!-- Status Badge -->
+                {% if election.is_active_now %}
+                    <span class="status-badge status-active">
+                        <i class="fas fa-circle-dot"></i> Currently Active
+                    </span>
+                {% elif election.start_date > now %}
+                    <span class="status-badge status-upcoming">
+                        <i class="fas fa-clock"></i> Upcoming
+                    </span>
+                {% else %}
+                    <span class="status-badge status-ended">
+                        <i class="fas fa-check-circle"></i> Ended
+                    </span>
+                {% endif %}
+
+                <!-- Election Info -->
+                <div class="election-info-grid">
+                    <div class="info-box">
+                        <div class="info-label">Start Date</div>
+                        <div class="info-value">{{ election.start_date|date:"M j, Y" }}</div>
+                        <div style="font-size: 0.875rem; color: var(--text-muted);">{{ election.start_date|time:"g:i A" }}</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="info-label">End Date</div>
+                        <div class="info-value">{{ election.end_date|date:"M j, Y" }}</div>
+                        <div style="font-size: 0.875rem; color: var(--text-muted);">{{ election.end_date|time:"g:i A" }}</div>
+                    </div>
+                    {% if user.is_staff or user.is_superuser %}
+                    <div class="info-box">
+                        <div class="info-label">Total Votes</div>
+                        <div class="info-value">{{ election.total_votes }}</div>
+                        <div style="font-size: 0.875rem; color: var(--text-muted);">Cast</div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    {% if election.is_active_now %}
+                        {% if election.user_has_voted %}
+                            <a href="{% url 'voting_module:my_ballot' election.id %}" class="btn-election" style="background: #10b981;">
+                                <i class="fas fa-check-circle"></i> View My Ballot
+                            </a>
+                            <a href="{% url 'voting_module:school_election_results' election.id %}" class="btn-election btn-secondary">
+                                View Results
+                            </a>
+                        {% else %}
+                            <a href="{% url 'election_module:school_election_detail' election.id %}" class="btn-election">
+                                Vote Now
+                            </a>
+                            <a href="{% url 'voting_module:school_election_results' election.id %}" class="btn-election btn-secondary">
+                                View Results
+                            </a>
+                        {% endif %}
+                    {% elif election.start_date > now %}
+                        <span class="btn-election btn-disabled">
+                            Not Started Yet
+                        </span>
+                        <a href="{% url 'election_module:school_election_detail' election.id %}" class="btn-election btn-secondary">
+                            View Details
+                        </a>
+                    {% else %}
+                        <span class="btn-election btn-disabled">
+                            Election Ended
+                        </span>
+                        <a href="{% url 'voting_module:school_election_results' election.id %}" class="btn-election">
+                            View Results
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-calendar-times"></i>
+            <h3>No Elections Available</h3>
+            <p>There are currently no school elections scheduled. Check back later for upcoming elections.</p>
+            <a href="{% url 'home' %}" class="btn-election">
+                Back to Home
+            </a>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add smooth animation on scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, {
+        threshold: 0.1
+    });
+    
+    document.querySelectorAll('.election-card').forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(card);
+    });
+});
+</script>
+{% endblock %}

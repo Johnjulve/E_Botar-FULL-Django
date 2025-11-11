@@ -1,0 +1,1623 @@
+/* Copied from admin_custom.css for module-specific namespacing */
+/* ============================================
+   Custom Admin CSS - Consolidated Styles
+   ============================================ */
+
+/* CSS Variables / Root Styles - Matching Template Color Palette */
+:root {
+    --primary-color: #2563eb;
+    --primary-dark: #1d4ed8;
+    --secondary-color: #64748b;
+    --accent-color: #f59e0b;
+    --success-color: #10b981;
+    --danger-color: #ef4444;
+    --warning-color: #f59e0b;
+    --info-color: #06b6d4;
+    --light-bg: #f8fafc;
+    --card-bg: #ffffff;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+    --border-color: #e2e8f0;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    /* Brand palette (matching template) */
+    --brand-green: #0b6e3b;          /* primary green from header */
+    --brand-green-dark: #075a30;     /* darker green */
+    --brand-yellow: #f4cc5c;         /* yellow used in sidebars */
+    --brand-yellow-dark: #e6b93e;    /* deeper yellow for contrast */
+    --bg-light: #f8fafc;
+}
+
+/* General Styles */
+body {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.container {
+    max-width: 1140px;
+}
+
+/* ============================================
+   Admin Dashboard Styles
+   ============================================ */
+
+/* Admin Title */
+.admin-title {
+    text-align: center;
+    font-size: 3.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--brand-green) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 3rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    position: relative;
+}
+
+.admin-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, #10b981, #2563eb);
+    border-radius: 2px;
+}
+
+/* Admin Dashboard Cards */
+.admin-dashboard-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--border-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.admin-dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+}
+
+/* ============================================
+   Admin User Tools Styles
+   ============================================ */
+
+.admin-user-tools-container {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--border-color);
+}
+
+.admin-user-tools-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+/* ============================================
+   Candidate Card Styles
+   ============================================ */
+
+.candidate-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.candidate-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.candidate-photo {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--border-color);
+}
+
+.candidate-info h5 {
+    color: var(--text-primary);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.candidate-info p {
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+/* ============================================
+   Password Display Styles
+   ============================================ */
+
+.password-display {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.password-text {
+    font-family: 'Courier New', monospace;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    background: #ffffff;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 2px solid var(--primary-color);
+    margin: 1rem 0;
+}
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+
+.text-truncate-300 {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.btn-create-user {
+    background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+    border: none;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-create-user:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    color: white;
+}
+
+.section-title-form {
+    color: var(--text-primary);
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    backdrop-filter: blur(4px);
+}
+
+.modal-overlay.show {
+    display: flex;
+}
+
+.modal-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: var(--shadow-xl);
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.modal-header {
+    padding: 1.5rem 1.5rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-actions {
+    padding: 1rem 1.5rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.pw-box {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem 0;
+    padding: 1rem;
+    background: var(--light-bg);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.pw-value {
+    flex: 1;
+    font-family: 'Courier New', monospace;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    background: var(--card-bg);
+    padding: 0.75rem;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    word-break: break-all;
+}
+
+.copy-hint {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-top: 1rem;
+}
+
+/* Responsive modal */
+@media (max-width: 768px) {
+    .modal-card {
+        width: 95%;
+        margin: 1rem;
+    }
+    
+    .modal-header,
+    .modal-body,
+    .modal-actions {
+        padding: 1rem;
+    }
+    
+    .pw-box {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .modal-actions {
+        flex-direction: column;
+    }
+}
+
+/* ============================================
+   Candidates Management Styles
+   ============================================ */
+
+/* Page Title Section */
+.page-title-section {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+}
+
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.page-subtitle {
+    color: var(--text-secondary);
+    margin: 0.5rem 0 0 0;
+    font-size: 1rem;
+}
+
+.header-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+/* Button Styles */
+.btn-create {
+    background: linear-gradient(135deg, var(--brand-green) 0%, var(--brand-green-dark) 100%);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.2s ease;
+    border: none;
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-create:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+    color: white;
+    text-decoration: none;
+}
+
+.btn-outline-elections {
+    background: transparent;
+    color: var(--primary-color);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.2s ease;
+    border: 2px solid var(--primary-color);
+}
+
+.btn-outline-elections:hover {
+    background: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    transform: translateY(-1px);
+}
+
+.btn-back {
+    background: transparent;
+    color: var(--text-secondary);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.2s ease;
+    border: 2px solid var(--border-color);
+}
+
+.btn-back:hover {
+    background: var(--light-bg);
+    color: var(--text-primary);
+    text-decoration: none;
+    border-color: var(--text-secondary);
+}
+
+.btn-filter {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-filter:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Filter Section */
+.filter-section {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+}
+
+.filter-section h5 {
+    color: var(--text-primary);
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+/* Table Container */
+.table-container {
+    background: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+}
+
+.table-container .table {
+    margin-bottom: 0;
+}
+
+.table-container .table thead th {
+    background: var(--light-bg);
+    border-bottom: 2px solid var(--border-color);
+    font-weight: 600;
+    color: var(--text-primary);
+    padding: 1rem;
+}
+
+.table-container .table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.table-container .table tbody tr:hover {
+    background: var(--light-bg);
+}
+
+/* Empty State */
+.empty-state {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 3rem 2rem;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+}
+
+.empty-state-icon {
+    font-size: 4rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+.empty-state h4 {
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* Form Controls */
+.form-control, .form-select {
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+}
+
+/* Badge Styles */
+.badge {
+    font-weight: 600;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.badge.bg-success {
+    background: var(--brand-green) !important;
+}
+
+.badge.bg-secondary {
+    background: var(--secondary-color) !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .page-title-section {
+        padding: 1rem;
+    }
+    
+    .page-title {
+        font-size: 1.5rem;
+    }
+    
+    .header-actions {
+        width: 100%;
+        justify-content: stretch;
+    }
+    
+    .btn-create, .btn-outline-elections {
+        flex: 1;
+        justify-content: center;
+    }
+    
+    .filter-section {
+        padding: 1rem;
+    }
+    
+    .table-container {
+        overflow-x: auto;
+    }
+    
+    .empty-state {
+        padding: 2rem 1rem;
+    }
+    
+    .empty-state-icon {
+        font-size: 3rem;
+    }
+    
+    /* Admin Dashboard Responsive */
+    .admin-title {
+        font-size: 2.5rem;
+    }
+    
+    .admin-dashboard-card {
+        padding: 1.5rem;
+    }
+    
+    .candidate-photo,
+    .application-photo {
+        width: 50px;
+        height: 50px;
+    }
+    
+    /* Select2 Responsive */
+    .select2-container--default .select2-selection--single {
+        height: 40px !important;
+    }
+    
+    /* Modal Responsive */
+    .modal-card {
+        padding: 16px;
+        width: 95%;
+    }
+}
+
+@media (max-width: 576px) {
+    .admin-title {
+        font-size: 2rem;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+    
+    .form-section {
+        padding: 1rem;
+    }
+    
+    .modal-body {
+        padding: 1rem;
+    }
+}
+
+/* ============================================
+   Review Applications Styles
+   ============================================ */
+
+/* Statistics Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Application Cards */
+.application-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.application-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+}
+
+.application-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.applicant-photo {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 1rem;
+    border: 3px solid var(--border-color);
+}
+
+.applicant-info {
+    flex: 1;
+}
+
+.applicant-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.position-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.application-meta {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* Status Badge */
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+}
+
+.status-pending {
+    background: linear-gradient(135deg, var(--warning-color) 0%, #d97706 100%);
+    color: white;
+}
+
+.status-approved {
+    background: linear-gradient(135deg, var(--brand-green) 0%, var(--brand-green-dark) 100%);
+    color: white;
+}
+
+.status-rejected {
+    background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
+    color: white;
+}
+
+/* Manifesto Section */
+.manifesto-section {
+    background: var(--light-bg);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-left: 4px solid var(--primary-color);
+}
+
+.manifesto-text {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.btn-approve {
+    background: linear-gradient(135deg, var(--brand-green) 0%, var(--brand-green-dark) 100%);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+    text-decoration: none;
+}
+
+.btn-approve:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+    color: white;
+    text-decoration: none;
+}
+
+.btn-reject {
+    background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+    text-decoration: none;
+}
+
+.btn-reject:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+    color: white;
+    text-decoration: none;
+}
+
+.btn-view {
+    background: transparent;
+    color: var(--primary-color);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    border: 2px solid var(--primary-color);
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.btn-view:hover {
+    background: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    transform: translateY(-1px);
+}
+
+.btn-back-dashboard {
+    background: var(--text-secondary);
+    color: white;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+    text-decoration: none;
+}
+
+.btn-back-dashboard:hover {
+    background: var(--text-primary);
+    color: white;
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Alert Styles */
+.alert {
+    border-radius: 12px;
+    border: none;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    color: #1e40af;
+    border-left: 4px solid var(--info-color);
+}
+
+.alert h6 {
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+}
+
+.alert ul {
+    margin: 0;
+    padding-left: 1.5rem;
+}
+
+.alert li {
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+}
+
+/* Responsive Design for Review Applications */
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+    
+    .stat-card {
+        padding: 1rem;
+    }
+    
+    .stat-icon {
+        font-size: 2rem;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+    }
+    
+    .application-card {
+        padding: 1rem;
+    }
+    
+    .application-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .applicant-photo {
+        width: 60px;
+        height: 60px;
+        margin-right: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .btn-approve, .btn-reject, .btn-view {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Button Election Styles */
+.btn-election {
+    display: inline-block !important;
+    padding: 0.6rem 1.25rem !important;
+    margin: 0.25rem !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    text-align: center !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    box-shadow: var(--shadow-sm) !important;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%) !important;
+    color: white !important;
+    min-width: auto !important;
+    max-width: none !important;
+    width: auto !important;
+}
+
+.btn-election:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: var(--shadow-md) !important;
+    color: white !important;
+    text-decoration: none !important;
+}
+
+.btn-election.btn-secondary {
+    background: linear-gradient(135deg, var(--secondary-color) 0%, #475569 100%) !important;
+}
+
+.btn-election.btn-secondary:hover {
+    background: linear-gradient(135deg, #475569 0%, #334155 100%) !important;
+    color: white !important;
+}
+
+/* ============================================
+   Enhanced Candidate Form Styles - Matching Theme Colors
+   ============================================ */
+
+.form-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.form-header {
+    background: linear-gradient(135deg, var(--brand-green) 0%, var(--brand-green-dark) 100%);
+    color: white;
+    padding: 2rem;
+    text-align: center;
+}
+
+.form-header h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+.form-header p {
+    margin: 0.5rem 0 0 0;
+    opacity: 0.9;
+    font-size: 1rem;
+}
+
+.form-body {
+    padding: 2rem;
+}
+
+.form-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: var(--light-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.form-section h3 {
+    color: var(--text-primary);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-section h3 i {
+    color: var(--brand-green);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 1.5px solid var(--border-color);
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    background: var(--card-bg);
+    color: var(--text-primary);
+}
+
+.form-control:focus {
+    border-color: var(--brand-green);
+    box-shadow: 0 0 0 3px rgba(11, 110, 59, 0.1);
+    outline: none;
+}
+
+.form-control.is-invalid {
+    border-color: var(--danger-color);
+}
+
+.invalid-feedback {
+    color: var(--danger-color);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.help-text {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+}
+
+.btn-submit {
+    background: linear-gradient(135deg, var(--brand-green) 0%, var(--brand-green-dark) 100%);
+    color: white;
+    border: none;
+    padding: 0.875rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-md);
+}
+
+.btn-submit:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+    background: linear-gradient(135deg, var(--brand-green-dark) 0%, #064e2a 100%);
+    color: white;
+}
+
+.btn-cancel {
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    padding: 0.875rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-cancel:hover {
+    background: #475569;
+    color: white;
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.current-election-info {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    border: 1px solid var(--brand-green);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.current-election-info h4 {
+    color: var(--brand-green-dark);
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+}
+
+.current-election-info p {
+    color: var(--brand-green-dark);
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+.user-examples {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 0.5rem;
+}
+
+.user-examples h5 {
+    color: var(--primary-color);
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+}
+
+.user-examples ul {
+    margin: 0;
+    padding-left: 1.25rem;
+    color: var(--primary-color);
+    font-size: 0.875rem;
+}
+
+.alert {
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid;
+}
+
+.alert-info {
+    background-color: #dbeafe;
+    border-color: #93c5fd;
+    color: var(--primary-color);
+}
+
+.alert-warning {
+    background-color: #fef3c7;
+    border-color: var(--warning-color);
+    color: #92400e;
+}
+
+/* Theme Color Enhancements */
+.form-section:nth-child(odd) {
+    background: linear-gradient(135deg, var(--light-bg) 0%, #f1f5f9 100%);
+}
+
+.form-section:nth-child(even) {
+    background: linear-gradient(135deg, #ffffff 0%, var(--light-bg) 100%);
+}
+
+/* Brand Yellow Accents */
+.form-section h3 i.fa-users {
+    color: var(--brand-yellow-dark);
+}
+
+.form-section h3 i.fa-crown {
+    color: var(--brand-green);
+}
+
+.form-section h3 i.fa-file-alt {
+    color: var(--accent-color);
+}
+
+/* Enhanced Focus States */
+.form-control:focus {
+    border-color: var(--brand-green);
+    box-shadow: 0 0 0 3px rgba(11, 110, 59, 0.15);
+}
+
+/* Button Hover Effects */
+.btn-submit:hover {
+    box-shadow: 0 8px 25px rgba(11, 110, 59, 0.3);
+}
+
+.btn-cancel:hover {
+    box-shadow: 0 4px 15px rgba(100, 116, 139, 0.3);
+}
+
+/* ============================================
+   Elections List Styles - Matching Theme Colors
+   ============================================ */
+
+/* Clean Action Buttons */
+.btn-outline-primary, .btn-outline-danger {
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    border-width: 1.5px;
+}
+
+.btn-outline-primary {
+    color: var(--brand-green);
+    border-color: var(--brand-green);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--brand-green);
+    border-color: var(--brand-green);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(11, 110, 59, 0.2);
+}
+
+.btn-outline-danger {
+    color: var(--danger-color);
+    border-color: var(--danger-color);
+}
+
+.btn-outline-danger:hover {
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(239, 68, 68, 0.2);
+}
+
+.btn-outline-primary i, .btn-outline-danger i {
+    font-size: 0.8rem;
+}
+
+/* Table improvements */
+.table {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.table thead th {
+    background-color: var(--light-bg);
+    border-bottom: 2px solid var(--border-color);
+    font-weight: 600;
+    color: var(--text-primary);
+    padding: 1rem 0.75rem;
+}
+
+.table tbody td {
+    padding: 1rem 0.75rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.table tbody tr:hover {
+    background-color: var(--light-bg);
+}
+
+/* Badge improvements */
+.badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+}
+
+.badge.bg-success {
+    background-color: var(--brand-green) !important;
+}
+
+.badge.bg-secondary {
+    background-color: var(--secondary-color) !important;
+}
+
+/* Header buttons - Updated to match theme */
+.btn-primary {
+    background: linear-gradient(135deg, var(--brand-green) 0%, var(--brand-green-dark) 100%);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 25px rgba(11, 110, 59, 0.3);
+    background: linear-gradient(135deg, var(--brand-green-dark) 0%, #064e2a 100%);
+}
+
+.btn-outline-success {
+    border-color: var(--brand-green);
+    color: var(--brand-green);
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-success:hover {
+    background-color: var(--brand-green);
+    border-color: var(--brand-green);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 25px rgba(11, 110, 59, 0.3);
+}
+
+/* Profile Modal Styles */
+.profile-modal .modal-content {
+    border-radius: 16px;
+    border: none;
+    box-shadow: var(--shadow-xl);
+}
+
+.profile-modal .modal-header {
+    background: linear-gradient(135deg, var(--brand-green) 0%, var(--brand-green-dark) 100%);
+    color: white;
+    border-radius: 16px 16px 0 0;
+    border-bottom: none;
+}
+
+.profile-modal .modal-header .btn-close {
+    filter: invert(1);
+}
+
+.profile-modal .manifesto-content {
+    background: var(--light-bg);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border-left: 4px solid var(--brand-green);
+}
+
+.profile-modal .review-notes {
+    background: #fef3c7;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border-left: 4px solid var(--warning-color);
+}
+
+.profile-modal .badge.status-pending {
+    background: linear-gradient(45deg, var(--warning-color), #fbbf24);
+    color: white;
+}
+
+.profile-modal .badge.status-approved {
+    background: linear-gradient(45deg, var(--success-color), #34d399);
+    color: white;
+}
+
+.profile-modal .badge.status-rejected {
+    background: linear-gradient(45deg, var(--danger-color), #f87171);
+    color: white;
+}
+
+/* ============================================
+   Dropdown Overflow Fix for Table Actions
+   ============================================ */
+
+/* Allow dropdowns to overflow table-responsive containers */
+.table-responsive {
+    overflow-x: auto;
+    /* Allow vertical overflow for dropdowns */
+    overflow-y: visible !important;
+}
+
+/* Ensure dropdowns can escape table cell boundaries */
+.table-responsive .dropdown {
+    position: static;
+}
+
+/* Fix dropdown positioning to prevent clipping */
+.table-responsive .dropdown-menu {
+    position: absolute !important;
+    z-index: 1050 !important;
+    /* Use Bootstrap's dropdown positioning - allow it to escape parent overflow */
+    transform: translate3d(0, 0, 0);
+    /* Ensure dropdown is not clipped */
+    max-height: none !important;
+}
+
+/* When dropdown is near bottom of viewport, flip it up */
+.table-responsive .dropdown-menu[data-bs-popper] {
+    position: absolute !important;
+}
+
+/* Ensure dropdowns in table cells can render outside */
+.table td .dropdown-menu,
+.table th .dropdown-menu {
+    position: absolute !important;
+    z-index: 1050 !important;
+    /* Allow dropdown to extend beyond table boundaries */
+    max-height: none !important;
+}
+
+/* Fix for Bootstrap dropdown positioning */
+.table-responsive .dropdown-menu.show {
+    position: absolute !important;
+    z-index: 1050 !important;
+}
+
+/* Ensure table cells don't clip dropdowns */
+.table td,
+.table th {
+    position: relative;
+    overflow: visible !important;
+}
+
+/* Prevent table wrapper from clipping */
+.table-responsive .table {
+    overflow: visible !important;
+}
+
+/* ============================================
+   Select2 Customization
+   ============================================ */
+
+.select2-container {
+    width: 100% !important;
+}
+
+/* Select2 Selection Box */
+.select2-container--default .select2-selection--single {
+    height: 45px !important;
+    border: 2px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    padding: 4px 12px !important;
+    transition: all 0.3s ease !important;
+}
+
+.select2-container--default .select2-selection--single:hover {
+    border-color: #cbd5e1 !important;
+}
+
+.select2-container--default.select2-container--focus .select2-selection--single {
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 37px !important;
+    color: #1e293b !important;
+    font-size: 15px !important;
+    padding-left: 8px !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 43px !important;
+    right: 10px !important;
+}
+
+/* Select2 Dropdown */
+.select2-container--default .select2-dropdown {
+    border: 2px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
+    margin-top: 4px !important;
+}
+
+/* Select2 Search Field */
+.select2-search--dropdown .select2-search__field {
+    padding: 12px !important;
+    border: 2px solid #e2e8f0 !important;
+    border-radius: 6px !important;
+    font-size: 14px !important;
+    margin: 8px !important;
+    width: calc(100% - 24px) !important;
+}
+
+.select2-search--dropdown .select2-search__field:focus {
+    border-color: #2563eb !important;
+    outline: none !important;
+}
+
+/* Select2 Results Options */
+.select2-results__option {
+    padding: 12px 16px !important;
+    font-size: 14px !important;
+    color: #1e293b !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer !important;
+}
+
+.select2-results__option:hover {
+    background-color: #f8fafc !important;
+    color: #2563eb !important;
+}
+
+.select2-results__option--highlighted[aria-selected] {
+    background-color: #2563eb !important;
+    color: white !important;
+}
+
+.select2-results__message {
+    padding: 12px 16px !important;
+    color: #64748b !important;
+    font-size: 14px !important;
+    text-align: center !important;
+}
+
+.select2-container--default .select2-results__message {
+    padding: 16px !important;
+    font-style: italic !important;
+}
+
+/* User Search Info Box */
+.user-search-info {
+    margin-bottom: 12px !important;
+    padding: 10px 12px !important;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%) !important;
+    border-radius: 6px !important;
+    border-left: 3px solid #2563eb !important;
+}
+
+.user-search-info small {
+    color: #1e293b !important;
+    font-size: 13px !important;
+}
+
+.user-search-info i {
+    color: #2563eb !important;
+    margin-right: 6px !important;
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+
+@media print {
+    .btn, .alert {
+        display: none !important;
+    }
+    
+    .card {
+        border: 1px solid #000 !important;
+        box-shadow: none !important;
+    }
+    
+    .no-print {
+        display: none !important;
+    }
+}
+
+/* ============================================
+   Drag and Drop Styles
+   ============================================ */
+
+tr.cursor-grab {
+    cursor: grab;
+}
+
+tr.cursor-grab:active {
+    cursor: grabbing;
+}
+
+tr[draggable="true"].table-active {
+    opacity: 0.5;
+    background-color: #f0f9ff;
+}
+
+/* ============================================
+   Additional Utility Classes
+   ============================================ */
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.text-ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.hover-shadow:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+

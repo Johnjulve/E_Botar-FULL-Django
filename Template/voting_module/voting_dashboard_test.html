@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VOTING DASHBOARD TEST</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 2rem;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #2563eb;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #2563eb, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border: 1px solid #c3e6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border: 1px solid #bee5eb;
+        }
+        .btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0.5rem;
+            transition: transform 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎉 NEW VOTING DASHBOARD IS WORKING! 🎉</h1>
+        
+        <div class="success">
+            <h3>✅ Template Successfully Loaded</h3>
+            <p>The new voting dashboard template is now active and working!</p>
+        </div>
+        
+        <div class="info">
+            <h3>📊 Dashboard Information</h3>
+            <p>
+                <strong>Active Elections:</strong> {{ elections.count }}<br>
+                <strong>Your Votes:</strong> {{ user_votes.count }}<br>
+                <strong>User:</strong> {{ user.username|default:"Anonymous" }}<br>
+                <strong>Template:</strong> voting_module/voting_dashboard.html<br>
+                <strong>View:</strong> voting_dashboard<br>
+                <strong>URL:</strong> /voting/
+            </p>
+        </div>
+        
+        <div style="margin-top: 2rem;">
+            <a href="/voting/" class="btn">🔄 Refresh Page</a>
+            <a href="/elections/" class="btn">📋 View Elections</a>
+            {% if user.is_authenticated %}
+                <a href="/auth/profile/" class="btn">👤 My Profile</a>
+            {% else %}
+                <a href="/auth/login/" class="btn">🔐 Login</a>
+            {% endif %}
+        </div>
+        
+        <div style="margin-top: 2rem; font-size: 0.9rem; color: #666;">
+            <p>If you can see this page with the modern design, the template system is working correctly!</p>
+        </div>
+    </div>
+</body>
+</html>
+
+

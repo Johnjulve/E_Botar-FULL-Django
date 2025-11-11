@@ -1,0 +1,523 @@
+{%extends 'Static/base.html'%}
+{% load static %}
+
+{% block title %}Candidate Dashboard - E-Botar{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #0b6e3b;
+        --primary-dark: #075a30;
+        --accent-color: #f4cc5c;
+        --success-color: #10b981;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --border-color: #e2e8f0;
+        --bg-light: #f8fafc;
+    }
+
+    /* Page Title Section */
+    .page-title-section {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding: 3rem 2rem;
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        border-radius: 24px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 15px 50px rgba(11, 110, 59, 0.3);
+    }
+
+    .page-title-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+
+    .page-title-section::after {
+        content: '';
+        position: absolute;
+        bottom: -30%;
+        left: -5%;
+        width: 200px;
+        height: 200px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+    }
+
+    .page-title {
+        font-size: 3rem;
+        font-weight: 900;
+        color: white;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 1;
+        letter-spacing: -1px;
+    }
+
+    .page-subtitle {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 1.2rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .dashboard-header {
+        display: none;
+    }
+    
+    .dashboard-header::before { display:none; }
+    
+    /* Statistics Grid - Smaller boxes */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: linear-gradient(135deg, white 0%, var(--bg-light) 100%);
+        border-radius: 12px;
+        padding: 1.25rem;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        border-top: 3px solid var(--primary-color);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--primary-color) 0%, transparent 100%);
+        opacity: 0.1;
+        border-radius: 0 12px 0 100%;
+    }
+
+    .stat-icon {
+        width: 45px;
+        height: 45px;
+        margin: 0 auto 0.75rem;
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(11, 110, 59, 0.2);
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-icon i {
+        color: white;
+        font-size: 1.25rem;
+    }
+    
+    .stat-number {
+        font-size: 1.75rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.25rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .stat-label {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        font-weight: 600;
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Candidate Cards */
+    .candidate-card {
+        background: white;
+        border-radius: 24px;
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        border-top: 5px solid var(--primary-color);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .candidate-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 150px;
+        height: 150px;
+        background: linear-gradient(135deg, var(--accent-color) 0%, transparent 100%);
+        opacity: 0.1;
+        border-radius: 0 24px 0 100%;
+    }
+    
+    .candidate-photo {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 6px solid var(--accent-color);
+        margin-bottom: 1.5rem;
+        box-shadow: 0 8px 20px rgba(244, 204, 92, 0.4);
+    }
+    
+    .vote-progress {
+        background: var(--bg-light);
+        border-radius: 20px;
+        height: 30px;
+        margin: 1.5rem 0;
+        overflow: hidden;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .vote-progress-bar {
+        background: linear-gradient(90deg, var(--primary-color) 0%, var(--success-color) 100%);
+        height: 100%;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 1rem;
+        color: white;
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+    
+    .application-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+        border-left: 4px solid #f59e0b;
+    }
+    
+    .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        font-weight: bold;
+        font-size: 0.9rem;
+    }
+    
+    .status-pending {
+        background: linear-gradient(45deg, #f59e0b, #fbbf24);
+        color: white;
+    }
+    
+    .status-approved {
+        background: linear-gradient(45deg, #10b981, #34d399);
+        color: white;
+    }
+    
+    .status-rejected {
+        background: linear-gradient(45deg, #ef4444, #f87171);
+        color: white;
+    }
+    
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 5rem 2rem;
+        background: linear-gradient(135deg, rgba(11, 110, 59, 0.05) 0%, rgba(244, 204, 92, 0.05) 100%);
+        border-radius: 24px;
+        margin: 3rem 0;
+    }
+    
+    .empty-state-icon {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 2rem;
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 15px 40px rgba(11, 110, 59, 0.3);
+    }
+    
+    .empty-state-icon i {
+        font-size: 4rem;
+        color: white;
+    }
+
+    .empty-state h3 {
+        color: var(--text-primary);
+        font-weight: 800;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state p {
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+    }
+    
+    .action-buttons {
+        margin-top: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .btn-action {
+        padding: 0.6rem 1rem;
+        border-radius: 10px;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .btn-primary-action { background: var(--brand-green, #0b6e3b); color: #fff; border: 1px solid var(--brand-green-dark, #075a30); }
+    .btn-primary-action:hover { background: var(--brand-green, #0b6e3b); border-color: var(--brand-green-dark, #075a30); color:#fff; }
+    
+    .btn-secondary-action { background: #6b7280; color: #fff; border: 1px solid #4b5563; }
+    .btn-secondary-action:hover { background:#6b7280; color:#fff; border-color:#4b5563; }
+
+    .btn-outline-green { background: #fff; color: var(--brand-green, #0b6e3b); border: 1px solid var(--brand-green-dark, #075a30); font-weight:700; }
+    .btn-outline-green:hover { background: var(--brand-green, #0b6e3b); color:#fff; border-color: var(--brand-green-dark, #075a30); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Title -->
+    <div class="page-title-section">
+        <h1 class="page-title">
+            <i class="fas fa-user-tie me-2"></i>
+            Candidate Dashboard
+        </h1>
+        <p class="page-subtitle">Track your campaign progress and manage your candidacies</p>
+    </div>
+
+    <!-- Statistics - Only visible to admin users -->
+    {% if user.is_staff or user.is_superuser %}
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-crown"></i>
+            </div>
+            <div class="stat-number">{{ user_candidates.count }}</div>
+            <div class="stat-label">Active Candidacies</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <div class="stat-number">{{ user_applications.count }}</div>
+            <div class="stat-label">Total Applications</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-vote-yea"></i>
+            </div>
+            <div class="stat-number">
+                {% for stat in candidate_stats %}
+                    {{ stat.votes }}
+                    {% if not forloop.last %}+{% endif %}
+                {% empty %}
+                    0
+                {% endfor %}
+            </div>
+            <div class="stat-label">Total Votes Received</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <div class="stat-number">{{ candidate_elections.count }}</div>
+            <div class="stat-label">Elections Participated</div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Active Candidacies -->
+    {% if user_candidates %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="mb-3">
+                <i class="fas fa-crown me-2"></i>
+                Active Candidacies
+            </h3>
+        </div>
+    </div>
+    
+    <div class="row">
+        {% for stat in candidate_stats %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="candidate-card">
+                <div class="text-center">
+                    {% if stat.candidate.photo %}
+                        <img src="{{ stat.candidate.photo.url }}" alt="{{ stat.candidate.name }}" class="candidate-photo">
+                    {% else %}
+                        <div class="candidate-photo bg-light d-flex align-items-center justify-content-center mx-auto">
+                            <i class="fas fa-user fa-3x text-muted"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <h4 class="mb-2">{{ stat.candidate.name }}</h4>
+                    <h5 class="text-primary mb-3">{{ stat.candidate.position.title }}</h5>
+                    
+                    {% if stat.candidate.party_name %}
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-flag me-1"></i>
+                            {{ stat.candidate.party_name }}
+                        </p>
+                    {% endif %}
+                    
+                    <div class="vote-stats">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold">Votes:</span>
+                            <span class="text-primary fw-bold">{{ stat.votes }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="fw-bold">Percentage:</span>
+                            <span class="text-success fw-bold">{{ stat.percentage }}%</span>
+                        </div>
+                        
+                        <div class="vote-progress">
+                            <div class="vote-progress-bar" style="width: {{ stat.percentage }}%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <a href="{% url 'voting_module:candidate_profile' stat.candidate.id %}" class="btn-action btn-primary-action">
+                            <i class="fas fa-eye"></i>
+                            View Profile
+                        </a>
+                        <a href="{% url 'voting_module:school_election_list' %}" class="btn-action btn-secondary-action">
+                            <i class="fas fa-vote-yea"></i>
+                            View Election
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Recent Applications - Only visible to admin users -->
+    {% if user.is_staff or user.is_superuser %}
+        {% if user_applications %}
+        <div class="row mb-4">
+            <div class="col-12">
+                <h3 class="mb-3">
+                    <i class="fas fa-file-alt me-2"></i>
+                    Recent Applications
+                </h3>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-12">
+                {% for application in user_applications|slice:":3" %}
+                <div class="application-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-1">{{ application.position.title }}</h5>
+                            <p class="text-muted mb-0">
+                                <i class="fas fa-calendar me-1"></i>
+                                {{ application.election.title }} - {{ application.submitted_at|date:"M d, Y" }}
+                            </p>
+                        </div>
+                        <span class="status-badge status-{{ application.status }}">
+                            {{ application.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                {% if user_applications.count > 3 %}
+                <div class="text-center mt-3">
+                    <a href="{% url 'voting_module:my_applications' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-list me-1"></i>
+                        View All Applications
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    {% endif %}
+
+    <!-- Empty State -->
+    {% if not user_candidates and not user_applications %}
+    <div class="empty-state">
+        <div class="empty-state-icon">
+            <i class="fas fa-user-tie"></i>
+        </div>
+        <h3>No Candidacies Yet</h3>
+        <p class="lead">You haven't applied for any positions or been approved as a candidate yet.</p>
+        <a href="{% url 'voting_module:candidate_application' %}" class="btn btn-primary-action btn-lg" style="background: var(--primary-color); color: white; border-radius: 50px; padding: 1rem 3rem; font-weight: 800; text-decoration: none; display: inline-block; box-shadow: 0 8px 25px rgba(11, 110, 59, 0.3); transition: all 0.3s ease;">
+            <i class="fas fa-plus me-2"></i>
+            Apply as Candidate
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header" style="background:linear-gradient(135deg, var(--brand-green, #0b6e3b), #0a5b33); color:#fff;">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>
+                        Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% if not user_applications %}
+                        <div class="col-md-4 mb-2">
+                            <a href="{% url 'voting_module:candidate_application' %}" class="btn btn-primary w-100" style="background:var(--brand-green,#0b6e3b); border-color:var(--brand-green-dark,#075a30); font-weight:700;">
+                                <i class="fas fa-plus me-1"></i>
+                                Apply for Position
+                            </a>
+                        </div>
+                        {% endif %}
+                        {% if user_applications %}
+                        <div class="col-md-4 mb-2">
+                            <a href="{% url 'voting_module:my_applications' %}" class="btn btn-outline-green w-100">
+                                <i class="fas fa-list me-1"></i>
+                                My Applications
+                            </a>
+                        </div>
+                        {% endif %}
+                        <div class="col-md-4 mb-2">
+                            <a href="{% url 'voting_module:school_election_list' %}" class="btn btn-outline-green w-100">
+                                <i class="fas fa-vote-yea me-1"></i>
+                                View Elections
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <a href="{% url 'voting_module:profile' %}" class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-user me-1"></i>
+                                Update Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

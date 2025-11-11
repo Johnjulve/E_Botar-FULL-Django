@@ -1,0 +1,594 @@
+{%extends 'Static/base.html'%}
+{% load static %}
+
+{% block title %}{{ election.title }} - Vote{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #2563eb;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --light-bg: #f8fafc;
+        --card-bg: #ffffff;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --text-muted: #94a3b8;
+        --border-color: #e2e8f0;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+    }
+
+    body {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .page-title {
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--text-primary) 0%, var(--brand-green) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .page-subtitle {
+        text-align: center;
+        font-size: 1.125rem;
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+        font-weight: 500;
+    }
+
+    .alert-box {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-md);
+        text-align: center;
+    }
+
+    .alert-active {
+        border-left: 4px solid var(--success-color);
+        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    }
+
+    .alert-inactive {
+        border-left: 4px solid var(--warning-color);
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    }
+
+    .alert-voted {
+        border-left: 4px solid var(--primary-color);
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    }
+
+    .position-section {
+        background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+        border-radius: 20px;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+        position: relative;
+        /* Ensure each position card spans full width as a single column
+           even if the parent uses CSS grid or flex layouts */
+        width: 100%;
+        grid-column: 1 / -1;
+    }
+
+    .position-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, var(--brand-yellow), var(--brand-green));
+    }
+
+    .position-header {
+        padding: 1.5rem 2rem;
+        text-align: center;
+    }
+
+    .position-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--brand-green);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .candidates-grid {
+        display: grid;
+        /* Fixed-width cards centered; keeps inner content intact */
+        grid-template-columns: repeat(auto-fit, minmax(260px, 260px));
+        justify-content: center;
+        justify-items: center;
+        gap: 1.5rem;
+        padding: 2rem;
+    }
+
+    .candidate-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        border: 2px solid var(--border-color);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .candidate-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-xl);
+        border-color: var(--success-color);
+    }
+
+    .candidate-card.selected {
+        border-color: var(--success-color);
+        background: linear-gradient(135deg, #d1fae5 0%, #ffffff 100%);
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    }
+
+    .candidate-card.selected::before {
+        content: '✓';
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: var(--success-color);
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+
+    .radio-input {
+        display: none;
+    }
+
+    .candidate-photo-wrapper {
+        text-align: center;
+        margin-bottom: 1rem;
+        position: relative;
+    }
+
+    .candidate-photo {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid var(--success-color);
+        background: #e9ecef;
+    }
+
+    .candidate-photo-placeholder {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--success-color), #10b981);
+        margin: 0 auto;
+        border: 4px solid var(--success-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: white;
+    }
+
+    .party-logo {
+        position: absolute;
+        top: -8px;
+        left: calc(50% - 60px - 8px);
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: white;
+        padding: 4px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        object-fit: contain;
+    }
+
+    .candidate-name {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+        text-align: center;
+    }
+
+    .candidate-party {
+        text-align: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .party-badge {
+        display: inline-block;
+        background: var(--brand-green);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+
+    .candidate-course {
+        font-size: 0.95rem;
+        color: var(--text-secondary);
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .candidate-manifesto {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        line-height: 1.5;
+        text-align: center;
+        max-height: 80px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+    }
+
+    .submit-section {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        margin: 2rem 0;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
+        text-align: center;
+    }
+
+    .submit-section h3 {
+        color: var(--success-color);
+        font-weight: 700;
+        font-size: 1.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .submit-section p {
+        color: var(--text-secondary);
+        font-size: 1.125rem;
+        margin-bottom: 2rem;
+    }
+
+    .btn-vote {
+        background: var(--brand-green, #0b6e3b);
+        color: #fff !important;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        text-transform: none;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        box-shadow: var(--shadow-lg);
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none !important;
+    }
+
+    .btn-vote:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-xl);
+    }
+
+    .btn-secondary {
+        background: #6b7280;
+        margin-left: 1rem;
+    }
+
+    .no-candidates {
+        text-align: center;
+        padding: 3rem;
+        color: var(--text-muted);
+    }
+
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 1.75rem;
+        }
+
+        .candidates-grid {
+            grid-template-columns: 1fr;
+            justify-content: center;
+            justify-items: center;
+            padding: 1rem;
+        }
+
+        .btn-vote {
+            width: 100%;
+            margin: 0.5rem 0;
+        }
+
+        .btn-secondary {
+            margin-left: 0;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="page-title">
+        <i class="fas fa-vote-yea"></i> {{ election.title }}
+    </h1>
+    {% if election.description %}
+    <p class="page-subtitle">{{ election.description }}</p>
+    {% endif %}
+
+    <!-- Election Status Alert -->
+    <div class="alert-box {% if election.is_active_now %}alert-active{% else %}alert-inactive{% endif %}">
+        {% if election.is_active_now %}
+            <div style="font-size: 1.25rem; font-weight: 700; color: #065f46; margin-bottom: 0.5rem;">
+                <i class="fas fa-circle-dot"></i> Election is Active
+            </div>
+            <div style="color: #047857;">
+                Voting ends on {{ election.end_date|date:"F j, Y" }} at {{ election.end_date|time:"g:i A" }}
+            </div>
+        {% else %}
+            <div style="font-size: 1.25rem; font-weight: 700; color: #92400e; margin-bottom: 0.5rem;">
+                <i class="fas fa-exclamation-triangle"></i> Election Not Active
+            </div>
+            <div style="color: #b45309;">
+                This election is not currently accepting votes.
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Already Voted Alert -->
+    {% if has_voted %}
+    <div class="alert-box alert-voted">
+        <div style="font-size: 1.5rem; font-weight: 700; color: #1e40af; margin-bottom: 0.5rem;">
+            <i class="fas fa-check-circle"></i> You Have Already Voted!
+        </div>
+        <p style="color: #1e3a8a; margin-bottom: 1.5rem;">
+            Thank you for participating in this election.
+        </p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <a href="{% url 'voting_module:my_ballot' election.id %}" class="btn-vote" style="background: #10b981;">
+                <i class="fas fa-ballot-check"></i> View My Ballot
+            </a>
+            <a href="{% url 'voting_module:school_election_results' election.id %}" class="btn-vote" style="background: #2563eb;">
+                <i class="fas fa-chart-bar"></i> View Results
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Voting Form -->
+    {% if not has_voted and election.is_active_now %}
+    <form method="post" action="{% url 'voting_module:submit_vote' election.id %}" id="votingForm">
+        {% csrf_token %}
+        
+        {% for item in positions_with_candidates %}
+        <div class="position-section">
+            <div class="position-header">
+                <h3 class="position-title">
+                    <i class="fas fa-crown"></i> {{ item.position.name }}
+                </h3>
+            </div>
+
+            <div class="candidates-grid">
+                {% for candidate in item.candidates %}
+                <div class="candidate-card" data-candidate-id="{{ candidate.id }}" data-position-id="{{ item.position.id }}">
+                    <input type="radio" 
+                           name="position_{{ item.position.id }}" 
+                           value="{{ candidate.id }}" 
+                           id="candidate_{{ candidate.id }}" 
+                           class="radio-input" 
+                           required>
+                    <label for="candidate_{{ candidate.id }}" style="cursor: pointer;">
+                        <div class="candidate-photo-wrapper">
+                            {% if candidate.photo %}
+                                <img src="{{ candidate.photo.url }}" alt="{{ candidate.user.get_full_name }}" class="candidate-photo">
+                            {% else %}
+                                <div class="candidate-photo-placeholder">
+                                    {{ candidate.user.get_full_name|first|upper }}
+                                </div>
+                            {% endif %}
+                            {% if candidate.party and candidate.party.logo %}
+                                <img src="{{ candidate.party.logo.url }}" alt="{{ candidate.party.name }}" class="party-logo" />
+                            {% endif %}
+                        </div>
+                        
+                        <div class="candidate-name">{{ candidate.user.get_full_name }}</div>
+                        
+                        {% if candidate.party %}
+                        <div class="candidate-party">
+                            <span class="party-badge">{{ candidate.party.name }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="candidate-course">
+                            {% if candidate.user.profile.course %}
+                                {{ candidate.user.profile.course.name }}{% if candidate.user.profile.year_level %} • {{ candidate.user.profile.year_level }}{% endif %}
+                            {% endif %}
+                        </div>
+                        
+                        {% if candidate.manifesto %}
+                        <div class="candidate-manifesto">{{ candidate.manifesto }}</div>
+                        {% endif %}
+                    </label>
+                </div>
+                {% empty %}
+                <div class="no-candidates">
+                    <i class="fas fa-users-slash" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                    <div style="font-weight: 600; color: var(--text-secondary);">No candidates registered for this position</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="alert-box alert-inactive">
+            <i class="fas fa-exclamation-circle" style="font-size: 2rem; display: block; margin-bottom: 1rem;"></i>
+            <p style="font-weight: 600; color: #92400e;">No positions available for this election.</p>
+        </div>
+        {% endfor %}
+
+        {% if positions_with_candidates %}
+        <div class="submit-section">
+            <h3><i class="fas fa-paper-plane"></i> Ready to Vote?</h3>
+            <p>Please review your selections. Once submitted, your votes cannot be changed.</p>
+            <button type="submit" class="btn-vote">
+                <i class="fas fa-check-double"></i> Submit My Votes
+            </button>
+            <a href="{% url 'voting_module:school_election_list' %}" class="btn-vote btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Elections
+            </a>
+        </div>
+        {% endif %}
+    </form>
+    {% elif not election.is_active_now %}
+    <!-- Show preview for inactive elections -->
+    <div style="text-align: center; margin: 3rem 0;">
+        <a href="{% url 'voting_module:school_election_results' election.id %}" class="btn-vote">
+            <i class="fas fa-chart-bar"></i> View Results
+        </a>
+        <a href="{% url 'voting_module:school_election_list' %}" class="btn-vote btn-secondary">
+            <i class="fas fa-list"></i> All Elections
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Back Navigation -->
+    <div style="text-align: center; margin-top: 3rem;">
+        <a href="{% url 'home' %}" class="btn-vote btn-secondary">
+            <i class="fas fa-home"></i> Back to Home
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle candidate card selection
+    const radioInputs = document.querySelectorAll('.radio-input');
+    
+    radioInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            const positionId = this.name;
+            
+            // Remove selected class from all cards in this position
+            document.querySelectorAll(`[data-position-id="${positionId.replace('position_', '')}"]`).forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selected class to chosen card
+            if (this.checked) {
+                this.closest('.candidate-card').classList.add('selected');
+            }
+        });
+    });
+    
+    // Form validation and AJAX submission
+    const form = document.getElementById('votingForm');
+    if (form) {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault(); // Prevent default form submission
+            
+            const positions = document.querySelectorAll('.position-section');
+            let missingSelections = [];
+            
+            positions.forEach(position => {
+                const title = position.querySelector('.position-title').textContent.trim();
+                const radioInputs = position.querySelectorAll('input[type="radio"]');
+                const hasSelection = Array.from(radioInputs).some(input => input.checked);
+                
+                if (radioInputs.length > 0 && !hasSelection) {
+                    missingSelections.push(title);
+                    position.style.borderColor = '#ef4444';
+                } else {
+                    position.style.borderColor = '#e2e8f0';
+                }
+            });
+            
+            if (missingSelections.length > 0) {
+                alert('Please select a candidate for: ' + missingSelections.join(', '));
+                return false;
+            }
+            
+            // Confirm submission
+            const confirmed = confirm('Are you sure you want to submit your votes? This action cannot be undone.');
+            if (!confirmed) {
+                return false;
+            }
+            
+            // Collect vote data
+            const votes = [];
+            positions.forEach(position => {
+                const checkedRadio = position.querySelector('input[type="radio"]:checked');
+                if (checkedRadio) {
+                    const positionId = checkedRadio.name.replace('position_', '');
+                    votes.push({
+                        position_id: parseInt(positionId),
+                        candidate_id: parseInt(checkedRadio.value)
+                    });
+                }
+            });
+            
+            // Show loading indicator
+            const submitButton = form.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.innerHTML;
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting Vote...';
+            
+            // Submit via AJAX
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    },
+                    body: JSON.stringify({ votes: votes })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Show success message briefly, then redirect
+                    submitButton.innerHTML = '<i class="fas fa-check"></i> Vote Submitted!';
+                    submitButton.style.background = '#10b981';
+                    
+                    setTimeout(() => {
+                        window.location.href = '{% url "voting_module:vote_receipt" election.id %}';
+                    }, 1000);
+                } else {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalButtonText;
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error submitting vote:', error);
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonText;
+                alert('An error occurred while submitting your vote. Please try again.');
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

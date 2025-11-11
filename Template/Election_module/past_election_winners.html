@@ -1,0 +1,374 @@
+{%extends 'Static/base.html'%}
+{% load static %}
+
+{% block title %}Previous Election - E-Botar{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #2563eb;
+        --primary-dark: #1d4ed8;
+        --secondary-color: #64748b;
+        --accent-color: #f59e0b;
+        --success-color: #10b981;
+        --danger-color: #ef4444;
+        --warning-color: #f59e0b;
+        --info-color: #06b6d4;
+        --light-bg: #f8fafc;
+        --card-bg: #ffffff;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --text-muted: #94a3b8;
+        --border-color: #e2e8f0;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    }
+
+    body {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .page-title {
+        text-align: center;
+        font-size: 3rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--text-primary) 0%, var(--brand-green) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .page-subtitle {
+        text-align: center;
+        font-size: 1.25rem;
+        color: var(--text-secondary);
+        margin-bottom: 3rem;
+        font-weight: 500;
+    }
+
+    .election-section {
+        background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 3rem;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .election-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, var(--success-color), #10b981);
+    }
+
+    .election-title {
+        color: var(--success-color);
+        font-weight: 700;
+        font-size: 1.75rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .election-date {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .winners-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.25rem;
+    }
+
+    .winner-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.25rem;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-sm);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .winner-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--success-color);
+    }
+
+    .winner-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, var(--success-color), #10b981);
+    }
+
+    .winner-content {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .winner-photo-wrapper {
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .winner-photo {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--success-color);
+    }
+
+    .winner-photo-placeholder {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--success-color), #10b981);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        color: white;
+        font-size: 1.75rem;
+    }
+
+    .winner-info {
+        flex: 1;
+    }
+
+    .winner-position {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--success-color);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.25rem;
+    }
+
+    .winner-name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+    }
+
+    .winner-party {
+        display: inline-block;
+        background: var(--brand-green);
+        color: white;
+        padding: 0.15rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .winner-details {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin-top: 0.25rem;
+    }
+
+    .winner-votes {
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        color: var(--success-color);
+        font-weight: 600;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: linear-gradient(135deg, var(--light-bg) 0%, #f1f5f9 100%);
+        border-radius: 20px;
+        border: 1px solid var(--border-color);
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        color: var(--text-muted);
+    }
+
+    .empty-state h3 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+    }
+
+    .empty-state p {
+        font-size: 1.125rem;
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+    }
+
+    .btn-view-elections {
+        background: var(--brand-green, #0b6e3b);
+        color: #fff;
+        border: 1px solid var(--brand-green-dark, #075a30);
+        padding: 0.6rem 1.25rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-transform: none;
+        letter-spacing: 0;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn-view-elections:hover {
+        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-xl);
+        text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 2rem;
+            letter-spacing: 1px;
+        }
+
+        .page-subtitle {
+            font-size: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .winners-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .election-section {
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Page Header -->
+    <h1 class="page-title">
+        <i class="fas fa-trophy"></i> Previous Elections
+    </h1>
+    <p class="page-subtitle">Celebrating our student leaders and their achievements</p>
+
+    {% if election_winners %}
+        <!-- Election Winners -->
+        {% for election_data in election_winners %}
+        <div class="election-section">
+            <h2 class="election-title">
+                <i class="fas fa-vote-yea"></i>
+                {{ election_data.election.title }}
+            </h2>
+            <p class="election-date">
+                <i class="fas fa-calendar"></i>
+                {{ election_data.election.start_date|date:"F d, Y" }} - {{ election_data.election.end_date|date:"F d, Y" }}
+            </p>
+
+            <div class="winners-grid">
+                {% for winner in election_data.winners %}
+                <div class="winner-card">
+                    <div class="winner-content">
+                         <div class="winner-photo-wrapper">
+                             {% if winner.winner.user.profile.photo %}
+                                 <img src="{{ winner.winner.user.profile.photo.url }}" alt="{{ winner.winner.user.get_full_name }}" class="winner-photo">
+                             {% else %}
+                                 <div class="winner-photo-placeholder">
+                                     {{ winner.winner.user.get_full_name|first|upper }}
+                                 </div>
+                             {% endif %}
+                         </div>
+                        <div class="winner-info">
+                            <div class="winner-position">{{ winner.position.name }}</div>
+                            <div class="winner-name">{{ winner.winner.user.get_full_name }}</div>
+                            {% if winner.winner.party %}
+                                <div class="winner-party">{{ winner.winner.party.name }}</div>
+                            {% endif %}
+                            <div class="winner-details">
+                                {% if winner.winner.user.profile.course %}{{ winner.winner.user.profile.course }}{% endif %}{% if winner.winner.user.profile.year_level %} • {{ winner.winner.user.profile.year_level }}{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="winner-votes">
+                        <i class="fas fa-vote-yea"></i>
+                        <span>{{ winner.votes }} votes</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+            <i class="fas fa-trophy"></i>
+            <h3>No Previous Elections Yet</h3>
+            <p>Check back after elections are completed to see the results!</p>
+            <a href="{% url 'voting_module:school_election_list' %}" class="btn-view-elections">
+                View Current Elections
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+// Add smooth animation on scroll
+document.addEventListener('DOMContentLoaded', function() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, {
+        threshold: 0.1
+    });
+    
+    document.querySelectorAll('.winner-card').forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(card);
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,395 @@
+/* ============================================
+   Candidates CSS - Component-specific Styles
+   Based on E_Botar_v17 structure
+   ============================================ */
+
+/* ============================================
+   Candidate Application Styles
+   ============================================ */
+
+.candidate-application-container {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--border-color);
+}
+
+.requirements-section {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid #0ea5e9;
+}
+
+.requirements-section h6 {
+    color: #0c4a6e;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.requirements-section ul {
+    margin-bottom: 0;
+}
+
+.requirements-section li {
+    color: #0369a1;
+    margin-bottom: 0.5rem;
+}
+
+/* Application Form Styles */
+.application-form-section {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    padding: 0.75rem 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+}
+
+.form-select {
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    padding: 0.75rem 1rem;
+}
+
+/* Photo Upload Styles */
+.photo-upload-section {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: 16px;
+    padding: 1.5rem;
+    border: 2px dashed var(--border-color);
+    text-align: center;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.photo-upload-section:hover {
+    border-color: var(--primary-color);
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+}
+
+.photo-preview {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--border-color);
+    margin-bottom: 1rem;
+}
+
+/* Profile Picture Option */
+.profile-picture-option {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    margin-bottom: 1rem;
+}
+
+.form-check-input {
+    margin-top: 0.25rem;
+}
+
+.form-check-label {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+/* ============================================
+   Candidate Dashboard Styles
+   ============================================ */
+
+.candidate-dashboard-container {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--border-color);
+}
+
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.dashboard-stat-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dashboard-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.dashboard-stat-number {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-stat-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+/* Applications List */
+.applications-list {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.application-item {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border-color);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.application-item:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.application-item:last-child {
+    margin-bottom: 0;
+}
+
+.application-status {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.application-status.pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.application-status.approved {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.application-status.rejected {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* ============================================
+   Candidate Profile Styles
+   ============================================ */
+
+.candidate-profile-container {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--border-color);
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.candidate-photo-large {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--border-color);
+    margin-bottom: 1rem;
+}
+
+.candidate-name {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.candidate-position {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.candidate-party {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+/* Manifesto Section */
+.manifesto-section {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.manifesto-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.manifesto-text {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+/* ============================================
+   Action Buttons
+   ============================================ */
+
+.btn-apply {
+    background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+    border: none;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-apply:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    color: white;
+}
+
+.btn-edit-application {
+    background: linear-gradient(135deg, var(--warning-color) 0%, #d97706 100%);
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-edit-application:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+    color: white;
+}
+
+.btn-delete-application {
+    background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-delete-application:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+    color: white;
+}
+
+/* ============================================
+   Responsive Styles
+   ============================================ */
+
+@media (max-width: 768px) {
+    .candidate-application-container,
+    .candidate-dashboard-container,
+    .candidate-profile-container {
+        padding: 1.5rem;
+    }
+    
+    .dashboard-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .candidate-photo-large {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .candidate-name {
+        font-size: 1.5rem;
+    }
+    
+    .candidate-position {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .candidate-application-container,
+    .candidate-dashboard-container,
+    .candidate-profile-container {
+        padding: 1rem;
+    }
+    
+    .application-form-section {
+        padding: 1rem;
+    }
+    
+    .photo-upload-section {
+        padding: 1rem;
+    }
+    
+    .candidate-photo-large {
+        width: 80px;
+        height: 80px;
+    }
+}

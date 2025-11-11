@@ -1,0 +1,729 @@
+:root {
+    --primary-color: #2563eb;
+    --primary-dark: #1d4ed8;
+    --secondary-color: #64748b;
+    --accent-color: #f59e0b;
+    --success-color: #10b981;
+    --danger-color: #ef4444;
+    --warning-color: #f59e0b;
+    --info-color: #06b6d4;
+    --light-bg: #f8fafc;
+    --card-bg: #ffffff;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+    --border-color: #e2e8f0;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    /* Brand palette (logo-based) */
+    --brand-green: #0b6e3b;          /* primary green from header */
+    --brand-green-dark: #075a30;     /* darker green */
+    --brand-yellow: #f4cc5c;         /* yellow used in sidebars */
+    --brand-yellow-dark: #e6b93e;    /* deeper yellow for contrast */
+}
+
+/* General Styles */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1140px;
+}
+
+/* ============================================
+   Admin Title Styles
+   ============================================ */
+
+.admin-title {
+    text-align: center;
+    font-size: 3.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--brand-green) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 3rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    position: relative;
+}
+
+.admin-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, #10b981, #2563eb);
+    border-radius: 2px;
+}
+
+.administration-year {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+}
+
+.current-administration {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 3rem;
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--border-color);
+}
+
+.administration-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.official-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.official-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.official-photo {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--border-color);
+    margin-bottom: 1rem;
+}
+
+.official-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.official-position {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.official-party {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.official-votes {
+    font-size: 0.875rem;
+    color: var(--success-color);
+    font-weight: 600;
+}
+
+.election-status {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid #0ea5e9;
+}
+
+.status-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0c4a6e;
+    margin-bottom: 1rem;
+}
+
+.status-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.status-item {
+    background: #ffffff;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1px solid #bae6fd;
+}
+
+.status-label {
+    font-size: 0.875rem;
+    color: #0369a1;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.status-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0c4a6e;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.stat-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.no-administration {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-secondary);
+}
+
+.no-administration i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    color: var(--text-muted);
+}
+
+.no-administration h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.no-administration p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+
+/* ============================================
+   Card Styles
+   ============================================ */
+
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-xl);
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--light-bg) 0%, #f1f5f9 100%);
+    border-bottom: 1px solid var(--border-color);
+    border-radius: 16px 16px 0 0 !important;
+    padding: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* ============================================
+   Progress Bars
+   ============================================ */
+
+.progress {
+    height: 12px;
+    border-radius: 6px;
+    background: var(--light-bg);
+    overflow: hidden;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    border-radius: 6px;
+    transition: width 0.6s ease;
+}
+
+/* ============================================
+   Button Styles
+   ============================================ */
+
+.btn {
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Disable glossy/shining sweep animation on buttons site-wide */
+.btn::before { content: none !important; display: none !important; }
+.btn:hover::before { content: none !important; display: none !important; }
+
+/* Brand primary action button - consistent across pages */
+.btn-primary-action {
+    background: var(--brand-green, #0b6e3b);
+    color: #fff;
+    border: 1px solid var(--brand-green-dark, #075a30);
+    border-radius: 12px;
+    font-weight: 700;
+    padding: .9rem 1.25rem;
+    box-shadow: 0 6px 18px rgba(11,110,59,.15);
+}
+.btn-primary-action:hover {
+    background: var(--brand-green, #0b6e3b);
+    color: #fff;
+    border-color: var(--brand-green-dark, #075a30);
+    box-shadow: 0 8px 22px rgba(11,110,59,.2);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--success-color), #059669);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, var(--warning-color), #d97706);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-warning:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, var(--danger-color), #dc2626);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-outline-primary {
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-vote {
+    background: linear-gradient(135deg, var(--success-color), #059669);
+    color: white;
+    font-size: 1.1rem;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: var(--shadow-lg);
+    transition: all 0.3s ease;
+}
+
+.btn-vote:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-xl);
+    color: white;
+}
+
+/* ============================================
+   Navigation Styles
+   ============================================ */
+
+.navbar {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%) !important;
+    box-shadow: var(--shadow-lg);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar-brand {
+    font-weight: 800;
+    font-size: 1.75rem;
+    color: white !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.navbar-brand:hover {
+    transform: translateY(-1px);
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 500;
+    padding: 0.75rem 1.25rem !important;
+    border-radius: 8px;
+    margin: 0 0.25rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.navbar-nav .nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s;
+}
+
+.navbar-nav .nav-link:hover::before {
+    left: 100%;
+}
+
+.navbar-nav .nav-link:hover {
+    color: white !important;
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+}
+
+.navbar-nav .nav-link.active {
+    background: rgba(255, 255, 255, 0.2);
+    color: white !important;
+    font-weight: 600;
+}
+
+/* ============================================
+   Choice Selection Styling
+   ============================================ */
+
+.choice-option {
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 10px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.choice-option:hover {
+    border-color: #667eea;
+    background-color: #f8f9ff;
+}
+
+.choice-option.selected {
+    border-color: #667eea;
+    background-color: #e8f2ff;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* ============================================
+   Form Enhancements
+   ============================================ */
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* ============================================
+   Alert Enhancements
+   ============================================ */
+
+.alert {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================
+   Footer Styling
+   ============================================ */
+
+.footer {
+    /* Brand-aligned footer using university green tones */
+    background: linear-gradient(135deg, var(--brand-green) 0%, var(--brand-green-dark) 100%);
+    color: white;
+    padding: 3rem 0 2rem;
+    margin-top: 4rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    /* Yellow accent stripe matching the logo */
+    background: linear-gradient(90deg, var(--brand-yellow), var(--brand-yellow-dark), var(--brand-yellow));
+}
+
+.footer-content {
+    position: relative;
+    z-index: 2;
+}
+
+.footer h5 {
+    color: var(--brand-yellow);
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.footer p, .footer a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer a:hover {
+    color: var(--brand-yellow);
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 2rem;
+    padding-top: 2rem;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* ============================================
+   Loading Animations
+   ============================================ */
+
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ============================================
+   Vote Confirmation
+   ============================================ */
+
+.vote-confirmed {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* ============================================
+   Choice Percentage Display
+   ============================================ */
+
+.choice-percentage {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* ============================================
+   Poll Status Badges
+   ============================================ */
+
+.poll-status {
+    font-size: 0.8rem;
+    padding: 5px 12px;
+    border-radius: 20px;
+}
+
+.poll-status.active {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.poll-status.expired {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Button Election Styles - Global */
+.btn-election {
+    display: inline-block !important;
+    padding: 0.6rem 1.25rem !important;
+    margin: 0.25rem !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    text-align: center !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    box-shadow: var(--shadow-sm) !important;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%) !important;
+    color: white !important;
+    min-width: auto !important;
+    max-width: none !important;
+    width: auto !important;
+}
+
+.btn-election:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: var(--shadow-md) !important;
+    color: white !important;
+    text-decoration: none !important;
+}
+
+.btn-election.btn-secondary {
+    background: linear-gradient(135deg, var(--secondary-color) 0%, #475569 100%) !important;
+}
+
+.btn-election.btn-secondary:hover {
+    background: linear-gradient(135deg, #475569 0%, #334155 100%) !important;
+    color: white !important;
+}
+
+/* ============================================
+   Responsive Styles
+   ============================================ */
+
+@media (max-width: 768px) {
+    .poll-stats {
+        padding: 20px;
+        margin: 20px 0;
+    }
+    .poll-stats h4 { font-size: 2rem; }
+    .navbar-brand { font-size: 1.5rem; }
+
+    /* Stack action buttons nicely */
+    .action-buttons, .btn-group, .nav-user-section, .user-menu {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px !important;
+        justify-content: center;
+    }
+    .action-buttons .btn,
+    .btn-action,
+    .btn.btn-primary,
+    .btn.btn-outline-primary,
+    .btn.btn-secondary,
+    .btn.btn-outline-secondary {
+        width: 100%;
+        max-width: 320px;
+        padding: 10px 14px;
+        border-radius: 10px;
+        text-align: center;
+    }
+    
+    /* Override btn-election for proper sizing */
+    .btn-election {
+        width: auto !important;
+        max-width: none !important;
+        padding: 0.6rem 1.25rem !important;
+        margin: 0.25rem !important;
+        display: inline-block !important;
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%) !important;
+        color: white !important;
+        text-decoration: none !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        box-shadow: var(--shadow-sm) !important;
+        transition: all 0.2s ease !important;
+    }
+    
+    .btn-election:hover {
+        transform: translateY(-1px) !important;
+        box-shadow: var(--shadow-md) !important;
+        color: white !important;
+        text-decoration: none !important;
+    }
+    
+    .btn-election.btn-secondary {
+        background: linear-gradient(135deg, var(--secondary-color) 0%, #475569 100%) !important;
+    }
+    
+    .btn-election.btn-secondary:hover {
+        background: linear-gradient(135deg, #475569 0%, #334155 100%) !important;
+        color: white !important;
+    }
+
+    /* Headings scale down */
+    h1, .display-5, .results-title, .elections-title, .admin-title { font-size: 1.5rem !important; line-height: 1.2; }
+    h2, .position-title { font-size: 1.2rem !important; }
+    h3, .section-title { font-size: 1.05rem !important; }
+
+    /* Tighten grid gaps */
+    .stats-grid, .election-stats, .candidate-list { gap: 10px !important; }
+
+    /* Prevent horizontal scroll in result sections */
+    .table-responsive, .candidate-results, .results-preview { overflow-x: auto; }
+
+    /* Softer shadows on mobile */
+    .card, .position-card, .application-card, .candidate-card, .position-results { box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+}
+
+/* Extra-small phones */
+@media (max-width: 576px) {
+    .admin-title { font-size: 1.75rem !important; letter-spacing: 1px; margin-bottom: 1rem; }
+    .election-info { padding: 0.75rem !important; }
+    .election-stats .stat-number { font-size: 2rem !important; }
+    .election-stats .stat-label { font-size: 0.75rem !important; }
+}

@@ -1,0 +1,97 @@
+{%extends 'Static/base.html'%}
+{% load static %}
+
+{% block title %}Edit User{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin_module.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 900px;">
+    <h2 class="mb-3">Edit User - {{ user_obj.username }}</h2>
+    <form method="post" class="card p-3" id="userEditForm">
+        {% csrf_token %}
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">First name</label>
+                <input class="form-control" name="first_name" value="{{ user_obj.first_name }}" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Last name</label>
+                <input class="form-control" name="last_name" value="{{ user_obj.last_name }}" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Email</label>
+                <input class="form-control" type="email" name="email" value="{{ user_obj.email }}" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Student ID</label>
+                <input class="form-control" name="student_id" value="{{ profile.student_id }}" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Course</label>
+                <select class="form-select" name="course" id="courseSelect">
+                    <option value="">-- Select Course --</option>
+                    {% for dept in departments %}
+                        <optgroup label="{{ dept.name }} ({{ dept.code }})">
+                            {% for course in dept.courses.all %}
+                                <option value="{{ course.id }}" {% if profile.course.id == course.id %}selected{% endif %}>
+                                    {{ course.name }} ({{ course.code }})
+                                </option>
+                            {% endfor %}
+                        </optgroup>
+                    {% endfor %}
+                </select>
+                {% if profile.course %}
+                    <small class="form-text text-muted">Department: {{ profile.course.department.name }}</small>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Year level</label>
+                <select class="form-select" name="year_level">
+                    <option value="">-- Select Year Level --</option>
+                    <option value="1A" {% if profile.year_level == "1A" %}selected{% endif %}>1A</option>
+                    <option value="1B" {% if profile.year_level == "1B" %}selected{% endif %}>1B</option>
+                    <option value="2A" {% if profile.year_level == "2A" %}selected{% endif %}>2A</option>
+                    <option value="2B" {% if profile.year_level == "2B" %}selected{% endif %}>2B</option>
+                    <option value="3A" {% if profile.year_level == "3A" %}selected{% endif %}>3A</option>
+                    <option value="3B" {% if profile.year_level == "3B" %}selected{% endif %}>3B</option>
+                    <option value="4A" {% if profile.year_level == "4A" %}selected{% endif %}>4A</option>
+                    <option value="4B" {% if profile.year_level == "4B" %}selected{% endif %}>4B</option>
+                </select>
+            </div>
+            <div class="col-md-6 d-flex align-items-end">
+                <div class="form-check me-3">
+                    <input class="form-check-input" type="checkbox" id="is_active" name="is_active" {% if user_obj.is_active %}checked{% endif %}>
+                    <label class="form-check-label" for="is_active">Active</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input" type="checkbox" id="is_staff" name="is_staff" {% if user_obj.is_staff %}checked{% endif %}>
+                    <label class="form-check-label" for="is_staff">Staff</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input" type="checkbox" id="is_superuser" name="is_superuser" {% if user_obj.is_superuser %}checked{% endif %}>
+                    <label class="form-check-label" for="is_superuser">Superuser</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="is_verified" name="is_verified" {% if profile.is_verified %}checked{% endif %}>
+                    <label class="form-check-label" for="is_verified">Verified</label>
+                </div>
+            </div>
+        </div>
+        <div class="mt-3 d-flex gap-2">
+            <button class="btn btn-ebotar" type="submit">Save</button>
+            <a class="btn btn-outline-secondary" href="{% url 'admin_module:admin_dashboard' %}">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+// No validation needed - dropdown ensures valid selection
+</script>
+{% endblock %}
+

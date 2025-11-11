@@ -1,0 +1,366 @@
+{%extends 'Static/base.html'%}
+{% load static %}
+
+{% block title %}Create Candidate Application{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin_module.css' %}?v=20251016">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+    .select2-container {
+        width: 100% !important;
+    }
+    
+    /* Select2 Custom Styling */
+    .select2-container--default .select2-selection--single {
+        height: 45px !important;
+        border: 2px solid #e2e8f0 !important;
+        border-radius: 8px !important;
+        padding: 4px 12px !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .select2-container--default .select2-selection--single:hover {
+        border-color: #cbd5e1 !important;
+    }
+    
+    .select2-container--default.select2-container--focus .select2-selection--single {
+        border-color: #2563eb !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+    }
+    
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 37px !important;
+        color: #1e293b !important;
+        font-size: 15px !important;
+        padding-left: 8px !important;
+    }
+    
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 43px !important;
+        right: 10px !important;
+    }
+    
+    .select2-container--default .select2-dropdown {
+        border: 2px solid #e2e8f0 !important;
+        border-radius: 8px !important;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
+        margin-top: 4px !important;
+    }
+    
+    .select2-search--dropdown .select2-search__field {
+        padding: 12px !important;
+        border: 2px solid #e2e8f0 !important;
+        border-radius: 6px !important;
+        font-size: 14px !important;
+        margin: 8px !important;
+        width: calc(100% - 24px) !important;
+    }
+    
+    .select2-search--dropdown .select2-search__field:focus {
+        border-color: #2563eb !important;
+        outline: none !important;
+    }
+    
+    .select2-results__option {
+        padding: 12px 16px !important;
+        font-size: 14px !important;
+        color: #1e293b !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    
+    .select2-results__option:hover {
+        background-color: #f8fafc !important;
+        color: #2563eb !important;
+    }
+    
+    .select2-results__option--highlighted[aria-selected] {
+        background-color: #2563eb !important;
+        color: white !important;
+    }
+    
+    .select2-results__message {
+        padding: 12px 16px !important;
+        color: #64748b !important;
+        font-size: 14px !important;
+        text-align: center !important;
+    }
+    
+    .user-search-info {
+        margin-bottom: 12px !important;
+        padding: 10px 12px !important;
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%) !important;
+        border-radius: 6px !important;
+        border-left: 3px solid #2563eb !important;
+    }
+    
+    .user-search-info small {
+        color: #1e293b !important;
+        font-size: 13px !important;
+    }
+    
+    .user-search-info i {
+        color: #2563eb !important;
+        margin-right: 6px !important;
+    }
+    
+    /* Hide default Select2 validation message */
+    .select2-container--default .select2-results__message {
+        padding: 16px !important;
+        font-style: italic !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <div class="form-header">
+            <h1>
+                <i class="fas fa-user-plus"></i>
+                Create Candidate Application
+            </h1>
+            <p>Assist a user in applying for a candidate position</p>
+        </div>
+        
+        <div class="form-body">
+            {% if current_election %}
+            <div class="current-election-info">
+                <h4>
+                    <i class="fas fa-vote-yea"></i>
+                    Current Election: {{ current_election.title }}
+                </h4>
+                <p>
+                    <i class="fas fa-calendar"></i>
+                    {{ current_election.start_date|date:"F d, Y" }} - {{ current_election.end_date|date:"F d, Y" }}
+                </p>
+            </div>
+            {% endif %}
+            
+            {% if form.non_field_errors %}
+                <div class="alert alert-warning">
+                    <strong>Please correct the following errors:</strong>
+                    <ul class="mb-0 mt-2">
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- User Selection Section -->
+                <div class="form-section">
+                    <h3>
+                        <i class="fas fa-users"></i>
+                        Select User
+                    </h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.user.id_for_label }}">
+                            {{ form.user.label }}
+                        </label>
+                        <div class="user-search-info">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle"></i>
+                                Start typing to search for users by name, username, or email...
+                            </small>
+                        </div>
+                        {{ form.user }}
+                        {% if form.user.help_text %}
+                            <div class="help-text">{{ form.user.help_text }}</div>
+                        {% endif %}
+                        {% if form.user.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.user.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Position and Election Section -->
+                <div class="form-section">
+                    <h3>
+                        <i class="fas fa-crown"></i>
+                        Position & Election
+                    </h3>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="{{ form.position.id_for_label }}">
+                                    {{ form.position.label }}
+                                </label>
+                                {{ form.position }}
+                                {% if form.position.help_text %}
+                                    <div class="help-text">{{ form.position.help_text }}</div>
+                                {% endif %}
+                                {% if form.position.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.position.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="{{ form.election.id_for_label }}">
+                                    {{ form.election.label }}
+                                </label>
+                                {{ form.election }}
+                                {% if form.election.help_text %}
+                                    <div class="help-text">{{ form.election.help_text }}</div>
+                                {% endif %}
+                                {% if form.election.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.election.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.party.id_for_label }}">
+                            {{ form.party.label }}
+                        </label>
+                        {{ form.party }}
+                        {% if form.party.help_text %}
+                            <div class="help-text">{{ form.party.help_text }}</div>
+                        {% endif %}
+                        {% if form.party.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.party.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Manifesto Section -->
+                <div class="form-section">
+                    <h3>
+                        <i class="fas fa-file-alt"></i>
+                        Campaign Information
+                    </h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.manifesto.id_for_label }}">
+                            {{ form.manifesto.label }}
+                        </label>
+                        {{ form.manifesto }}
+                        {% if form.manifesto.help_text %}
+                            <div class="help-text">{{ form.manifesto.help_text }}</div>
+                        {% endif %}
+                        {% if form.manifesto.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.manifesto.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.photo.id_for_label }}">
+                            {{ form.photo.label }}
+                        </label>
+                        {{ form.photo }}
+                        {% if form.photo.help_text %}
+                            <div class="help-text">{{ form.photo.help_text }}</div>
+                        {% endif %}
+                        {% if form.photo.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.photo.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Information Alert -->
+                <div class="alert alert-info">
+                    <strong>
+                        <i class="fas fa-info-circle"></i>
+                        Important Information:
+                    </strong>
+                    <ul class="mb-0 mt-2">
+                        <li>This will create a <strong>pending</strong> candidate application</li>
+                        <li>The application will appear in "Review Applications" for approval</li>
+                        <li>The user can later edit their application from their profile</li>
+                        <li>Only one application per user per election is allowed</li>
+                    </ul>
+                </div>
+                
+                <!-- Submit Buttons -->
+                <div class="d-flex gap-3 justify-content-end">
+                    <a href="{% url 'admin_module:review_applications' %}" class="btn-ebotar-outline">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </a>
+                    <button type="submit" class="btn-ebotar">
+                        <i class="fas fa-check me-2"></i>Create Application
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#id_user').select2({
+        placeholder: 'Start typing to search users...',
+        allowClear: true,
+        ajax: {
+            url: '{% url "admin_module:user_autocomplete" %}',
+            dataType: 'json',
+            delay: 300,
+            data: function(params) {
+                return {
+                    q: params.term,
+                    page: params.page || 1
+                };
+            },
+            processResults: function(data) {
+                return {
+                    results: data.results.map(function(item) {
+                        return {
+                            id: item.id,
+                            text: item.text
+                        };
+                    })
+                };
+            },
+            cache: true
+        },
+        minimumInputLength: 2,
+        language: {
+            inputTooShort: function() {
+                return '<span style="padding: 12px; color: #64748b; font-size: 14px;">⏳ Type at least 2 characters to search...</span>';
+            },
+            searching: function() {
+                return '<span style="padding: 12px; color: #2563eb; font-size: 14px;">🔍 Searching users...</span>';
+            },
+            noResults: function() {
+                return '<span style="padding: 12px; color: #ef4444; font-size: 14px;">❌ No users found. Try a different search term.</span>';
+            },
+            errorLoading: function() {
+                return '<span style="padding: 12px; color: #ef4444; font-size: 14px;">⚠️ Unable to load results. Please try again.</span>';
+            }
+        },
+        escapeMarkup: function(markup) {
+            return markup;
+        }
+    });
+    
+    // Add a nice animation when opening the dropdown
+    $('#id_user').on('select2:open', function() {
+        $(this).data('select2').$dropdown.addClass('select2-dropdown--animation');
+    });
+});
+</script>
+{% endblock %}

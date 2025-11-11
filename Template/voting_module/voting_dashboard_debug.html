@@ -1,0 +1,44 @@
+{% extends 'Static/base.html' %}
+{% load static %}
+
+{% block title %}Voting Dashboard - DEBUG{% endblock %}
+
+{% block content %}
+<div style="padding: 2rem; background: #f0f0f0; min-height: 100vh;">
+    <div style="background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <h1 style="color: #2563eb; margin-bottom: 1rem;">
+            🎉 NEW VOTING DASHBOARD IS WORKING! 🎉
+        </h1>
+        
+        <div style="background: #e8f5e8; padding: 1rem; border-radius: 4px; margin-bottom: 1rem;">
+            <h3 style="color: #059669; margin: 0;">✅ Template Successfully Loaded</h3>
+            <p style="margin: 0.5rem 0 0 0;">The new voting dashboard template is now active!</p>
+        </div>
+        
+        <div style="background: #fef3c7; padding: 1rem; border-radius: 4px; margin-bottom: 1rem;">
+            <h3 style="color: #d97706; margin: 0;">📊 Dashboard Statistics</h3>
+            <p style="margin: 0.5rem 0 0 0;">
+                Active Elections: {{ elections.count }}<br>
+                Your Votes: {{ user_votes.count }}<br>
+                User: {{ user.username|default:"Anonymous" }}
+            </p>
+        </div>
+        
+        <div style="background: #dbeafe; padding: 1rem; border-radius: 4px;">
+            <h3 style="color: #2563eb; margin: 0;">🔧 Debug Information</h3>
+            <p style="margin: 0.5rem 0 0 0;">
+                Template: voting_module/voting_dashboard.html<br>
+                View: voting_dashboard<br>
+                URL: /voting/<br>
+                Time: {{ now|date:"Y-m-d H:i:s" }}
+            </p>
+        </div>
+        
+        <div style="margin-top: 2rem; text-align: center;">
+            <a href="/voting/" style="background: #2563eb; color: white; padding: 1rem 2rem; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                Refresh Page
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

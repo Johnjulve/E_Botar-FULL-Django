@@ -1,0 +1,683 @@
+{%extends 'Static/base.html'%}
+{% load static %}
+
+{% block title %}Apply as Candidate - E-Botar{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #0b6e3b;
+        --primary-dark: #075a30;
+        --accent-color: #f4cc5c;
+        --success-color: #10b981;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --border-color: #e2e8f0;
+        --bg-light: #f8fafc;
+    }
+
+    /* Page Title with Gradient */
+    .page-title-section {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding: 2rem 1rem;
+        background: linear-gradient(135deg, rgba(11, 110, 59, 0.05) 0%, rgba(244, 204, 92, 0.05) 100%);
+        border-radius: 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .page-title-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color) 0%, var(--accent-color) 100%);
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary-color) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.5px;
+    }
+
+    .page-subtitle {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        margin: 0;
+    }
+
+    /* Form Sections */
+    .form-section {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        border-top: 4px solid var(--primary-color);
+        position: relative;
+    }
+
+    .section-title {
+        color: var(--primary-color);
+        font-weight: 800;
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 3px solid var(--accent-color);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .section-title i {
+        font-size: 1.75rem;
+    }
+
+    /* Enhanced Form Controls */
+    .form-label {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+    }
+
+    .form-label i {
+        color: var(--primary-color);
+    }
+
+    .form-control, .form-select {
+        border-radius: 12px;
+        border: 2px solid var(--border-color);
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(11, 110, 59, 0.15);
+        outline: none;
+    }
+
+    /* Requirements Section */
+    .requirements-section {
+        background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border-left: 6px solid var(--success-color);
+        box-shadow: 0 4px 20px rgba(16, 185, 129, 0.1);
+    }
+
+    .requirements-section h6 {
+        color: var(--success-color);
+        font-weight: 800;
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .requirements-section ul {
+        margin: 0;
+        padding-left: 1.75rem;
+        list-style: none;
+    }
+
+    .requirements-section li {
+        margin-bottom: 0.75rem;
+        color: var(--text-primary);
+        position: relative;
+        padding-left: 1.5rem;
+        line-height: 1.6;
+    }
+
+    .requirements-section li::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: var(--success-color);
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+
+    /* Info Cards */
+    .info-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        padding: 1.25rem;
+        height: 100%;
+    }
+
+    .info-label {
+        font-weight: 700;
+        color: var(--primary-color);
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .info-value {
+        color: var(--text-primary);
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    /* File Upload Area */
+    .file-upload-area {
+        border: 3px dashed var(--border-color);
+        border-radius: 16px;
+        padding: 2.5rem;
+        text-align: center;
+        cursor: pointer;
+        background: var(--bg-light);
+    }
+
+    .file-upload-area:hover {
+        border-color: var(--primary-color);
+        background: rgba(11, 110, 59, 0.05);
+    }
+
+    .file-upload-area.dragover {
+        border-color: var(--success-color);
+        background: rgba(16, 185, 129, 0.1);
+    }
+
+    .file-upload-area i {
+        color: var(--primary-color);
+    }
+
+    .preview-image {
+        max-width: 250px;
+        max-height: 250px;
+        border-radius: 16px;
+        margin-top: 1.5rem;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        border: 4px solid white;
+    }
+
+    /* Submit Button */
+    .submit-section {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        border-radius: 20px;
+        padding: 2.5rem;
+        text-align: center;
+        margin-top: 2rem;
+        box-shadow: 0 10px 40px rgba(11, 110, 59, 0.2);
+    }
+
+    .btn-apply {
+        background: white;
+        color: var(--primary-color);
+        border: 3px solid white;
+        padding: 1rem 3rem;
+        border-radius: 50px;
+        font-weight: 800;
+        font-size: 1.2rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        cursor: pointer;
+    }
+
+    .btn-apply:hover {
+        background: var(--accent-color);
+        color: var(--primary-dark);
+    }
+
+    /* Alert Styling */
+    .alert {
+        border-radius: 12px;
+        border: none;
+        padding: 1rem 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .alert-info {
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        color: #1e40af;
+        border-left: 5px solid #3b82f6;
+    }
+
+    .alert-danger {
+        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        color: #991b1b;
+        border-left: 5px solid #ef4444;
+    }
+
+    .alert-warning {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        color: #92400e;
+        border-left: 5px solid #f59e0b;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 1.75rem;
+        }
+
+        .form-section {
+            padding: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+        }
+
+        .file-upload-area {
+            padding: 1.5rem;
+        }
+
+        .btn-apply {
+            padding: 0.875rem 2rem;
+            font-size: 1rem;
+        }
+
+        .submit-section {
+            padding: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Title -->
+    <div class="page-title-section">
+        <h1 class="page-title">
+            <i class="fas fa-user-tie me-2"></i>
+            Apply as Candidate
+        </h1>
+        <p class="page-subtitle">Take the first step toward making a difference in student governance</p>
+    </div>
+
+    <!-- Requirements -->
+    <div class="requirements-section">
+        <h6><i class="fas fa-info-circle me-2"></i>Application Requirements & Guidelines</h6>
+        <div class="row">
+            <div class="col-md-6">
+                <ul>
+                    <li>You must be a registered student in the system</li>
+                    <li>Complete all required fields in the application form</li>
+                    <li>Provide a clear photo for your campaign</li>
+                    <li>Write a compelling manifesto explaining your platform</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <ul>
+                    <li>Applications will be reviewed by administrators</li>
+                    <li>You can only apply for one position per election</li>
+                    <li><strong>Party Rule:</strong> One candidate per party per position</li>
+                    <li><strong>Term Limit:</strong> No consecutive terms in same position</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Applications Closed Message -->
+    {% if applications_closed %}
+    <div class="alert alert-warning" style="border-radius: 16px; border-left: 5px solid #f59e0b;">
+        <h4 class="alert-heading">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            Candidate Applications Closed
+        </h4>
+        <hr>
+        <p class="mb-0">
+            Candidate applications are currently <strong>not available</strong>. This is because:
+        </p>
+        <ul class="mt-2 mb-0">
+            <li>There are no upcoming elections scheduled at this time, or</li>
+            <li>All active elections have already started voting</li>
+        </ul>
+        <hr>
+        <p class="mb-0">
+            <strong>Please check back later</strong> or contact the administrator if you believe this is an error.
+        </p>
+    </div>
+    
+    <div class="text-center mt-4">
+        <a href="{% url 'home' %}" class="btn btn-primary" style="background: var(--primary-color); border-radius: 50px; padding: 0.75rem 2rem; font-weight: 700;">
+            <i class="fas fa-home me-2"></i>
+            Back to Home
+        </a>
+    </div>
+    {% else %}
+
+    <!-- Student Information Display -->
+    {% if profile %}
+    <div class="form-section">
+        <h3 class="section-title">
+            <i class="fas fa-user-graduate me-2"></i>
+            Your Student Information
+        </h3>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <div class="info-card">
+                    <label class="info-label">Student ID</label>
+                    <div class="info-value">{{ profile.student_id|default:"Not provided" }}</div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="info-card">
+                    <label class="info-label">Year Level</label>
+                    <div class="info-value">{{ profile.year_level|default:"Not provided" }}</div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="info-card">
+                    <label class="info-label">Department</label>
+                    <div class="info-value">
+                        {% if profile.department %}
+                            {{ profile.department.name }} ({{ profile.department.code }})
+                        {% else %}
+                            Not selected
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="info-card">
+                    <label class="info-label">Course</label>
+                    <div class="info-value">
+                        {% if profile.course %}
+                            {{ profile.course.name }} ({{ profile.course.code }})
+                        {% else %}
+                            Not selected
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>Note:</strong> This information is automatically populated from your profile. 
+            If you need to update your course information, please visit your 
+            <a href="{% url 'voting_module:profile' %}" class="alert-link">profile page</a> first.
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Application Form -->
+    <div class="form-section">
+        <h3 class="section-title">
+            <i class="fas fa-edit me-2"></i>
+            Candidate Application Form
+        </h3>
+        
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- Display form-wide errors -->
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Application Error:</strong>
+                    {{ form.non_field_errors.0 }}
+                </div>
+            {% endif %}
+            
+            <!-- Display all form errors for debugging -->
+            {% if form.errors %}
+                {% for field, errors in form.errors.items %}
+                    {% if field != '__all__' %}
+                        <div class="alert alert-warning" role="alert">
+                            <strong>{{ field }}:</strong> {{ errors.0 }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.position.id_for_label }}" class="form-label">
+                        <i class="fas fa-crown me-1"></i>
+                        Position *
+                    </label>
+                    {{ form.position }}
+                    {% if form.position.errors %}
+                        <div class="text-danger small mt-1">{{ form.position.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.election.id_for_label }}" class="form-label">
+                        <i class="fas fa-calendar me-1"></i>
+                        Election *
+                    </label>
+                    {{ form.election }}
+                    {% if form.election.errors %}
+                        <div class="text-danger small mt-1">{{ form.election.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.party.id_for_label }}" class="form-label">
+                        <i class="fas fa-flag me-1"></i>
+                        Registered Party (Optional)
+                    </label>
+                    {{ form.party }}
+                    {% if form.party.errors %}
+                        <div class="text-danger small mt-1">{{ form.party.errors.0 }}</div>
+                    {% endif %}
+                    <div class="form-text">Select from registered parties or enter a custom party name below.</div>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.party_name.id_for_label }}" class="form-label">
+                        <i class="fas fa-edit me-1"></i>
+                        Custom Party Name (Optional)
+                    </label>
+                    {{ form.party_name }}
+                    {% if form.party_name.errors %}
+                        <div class="text-danger small mt-1">{{ form.party_name.errors.0 }}</div>
+                    {% endif %}
+                    <div class="form-text">Leave blank if you selected a registered party above.</div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.party_logo.id_for_label }}" class="form-label">
+                        <i class="fas fa-image me-1"></i>
+                        Party Logo (Optional)
+                    </label>
+                    {{ form.party_logo }}
+                    {% if form.party_logo.errors %}
+                        <div class="text-danger small mt-1">{{ form.party_logo.errors.0 }}</div>
+                    {% endif %}
+                    <div class="form-text">Upload a custom party logo if not using a registered party.</div>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="{{ form.manifesto.id_for_label }}" class="form-label">
+                    <i class="fas fa-file-text me-1"></i>
+                    Campaign Manifesto *
+                </label>
+                {{ form.manifesto }}
+                {% if form.manifesto.errors %}
+                    <div class="text-danger small mt-1">{{ form.manifesto.errors.0 }}</div>
+                {% endif %}
+                <div class="form-text">Describe your platform, goals, and why you should be elected for this position.</div>
+            </div>
+            
+            <div class="mb-4">
+                <label class="form-label">
+                    <i class="fas fa-camera me-1"></i>
+                    Campaign Photo *
+                </label>
+                
+                <!-- Profile Picture Option -->
+                <div class="mb-3">
+                    <div class="form-check">
+                        {{ form.use_profile_picture }}
+                        <label class="form-check-label" for="{{ form.use_profile_picture.id_for_label }}">
+                            <i class="fas fa-user-circle me-1"></i>
+                            Use my profile picture instead of uploading a new photo
+                        </label>
+                    </div>
+                    {% if user.profile and user.profile.avatar %}
+                        <div class="mt-2">
+                            <small class="text-muted">Current profile picture:</small>
+                            <img src="{{ user.profile.avatar.url }}" alt="Profile Picture" class="ms-2" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #e2e8f0;">
+                        </div>
+                    {% else %}
+                        <div class="mt-2">
+                            <small class="text-warning">
+                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                You don't have a profile picture set. Please upload a photo below.
+                            </small>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- File Upload Area -->
+                <div class="file-upload-area" onclick="document.getElementById('{{ form.photo.id_for_label }}').click()">
+                    <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                    <p class="mb-2">Click to upload your photo or drag and drop</p>
+                    <p class="text-muted small">PNG, JPG, GIF up to 10MB</p>
+                    {{ form.photo }}
+                </div>
+                {% if form.photo.errors %}
+                    <div class="text-danger small mt-1">{{ form.photo.errors.0 }}</div>
+                {% endif %}
+                <div id="photo-preview" class="mt-3"></div>
+            </div>
+            
+            <div class="submit-section">
+                <h4 class="text-white mb-3">Ready to Make a Difference?</h4>
+                <p class="text-white mb-4 opacity-75">Submit your application and join the next generation of student leaders</p>
+                <button type="submit" class="btn-apply">
+                    <i class="fas fa-paper-plane me-2"></i>
+                    Submit Application
+                </button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+// File upload preview
+document.getElementById('{{ form.photo.id_for_label }}').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    const preview = document.getElementById('photo-preview');
+    
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.innerHTML = '<img src="' + e.target.result + '" class="preview-image" alt="Photo preview">';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.innerHTML = '';
+    }
+});
+
+// Drag and drop functionality
+const uploadArea = document.querySelector('.file-upload-area');
+const fileInput = document.getElementById('{{ form.photo.id_for_label }}');
+
+uploadArea.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    uploadArea.classList.add('dragover');
+});
+
+uploadArea.addEventListener('dragleave', function(e) {
+    e.preventDefault();
+    uploadArea.classList.remove('dragover');
+});
+
+uploadArea.addEventListener('drop', function(e) {
+    e.preventDefault();
+    uploadArea.classList.remove('dragover');
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        fileInput.files = files;
+        fileInput.dispatchEvent(new Event('change'));
+    }
+});
+
+// Handle profile picture option
+document.getElementById('{{ form.use_profile_picture.id_for_label }}').addEventListener('change', function(e) {
+    const fileUploadArea = document.querySelector('.file-upload-area');
+    const photoInput = document.getElementById('{{ form.photo.id_for_label }}');
+    
+    if (e.target.checked) {
+        fileUploadArea.style.opacity = '0.5';
+        fileUploadArea.style.pointerEvents = 'none';
+        photoInput.required = false;
+    } else {
+        fileUploadArea.style.opacity = '1';
+        fileUploadArea.style.pointerEvents = 'auto';
+        photoInput.required = true;
+    }
+});
+
+// Handle party selection
+document.getElementById('{{ form.party.id_for_label }}').addEventListener('change', function(e) {
+    const partyNameField = document.getElementById('{{ form.party_name.id_for_label }}');
+    
+    if (e.target.value) {
+        // If a party is selected, disable custom party name
+        partyNameField.disabled = true;
+        partyNameField.value = '';
+        partyNameField.placeholder = 'Custom party name disabled (using selected party)';
+    } else {
+        // If no party selected, enable custom party name
+        partyNameField.disabled = false;
+        partyNameField.placeholder = 'Custom Party Name (if not selecting from list)';
+    }
+});
+
+// Form validation
+document.querySelector('form').addEventListener('submit', function(e) {
+    const requiredFields = ['position', 'election', 'manifesto'];
+    let isValid = true;
+    
+    // Check if photo is required
+    const useProfilePicture = document.getElementById('{{ form.use_profile_picture.id_for_label }}').checked;
+    const photoInput = document.getElementById('{{ form.photo.id_for_label }}');
+    
+    if (!useProfilePicture && !photoInput.files.length) {
+        isValid = false;
+        photoInput.classList.add('is-invalid');
+        alert('Please upload a photo or select to use your profile picture.');
+    } else {
+        photoInput.classList.remove('is-invalid');
+    }
+    
+    requiredFields.forEach(function(fieldName) {
+        const field = document.querySelector('[name="' + fieldName + '"]');
+        if (!field.value.trim()) {
+            isValid = false;
+            field.classList.add('is-invalid');
+        } else {
+            field.classList.remove('is-invalid');
+        }
+    });
+    
+    if (!isValid) {
+        e.preventDefault();
+        alert('Please fill in all required fields.');
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,506 @@
+{% extends 'Static/base.html' %}
+{% load static %}
+
+{% block title %}My Applications - E-Botar{% endblock %}
+
+{% block extra_css %}
+<style>
+    .application-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.75rem 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        border-left: 5px solid var(--brand-green, #0b6e3b);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        max-width: 100%;
+    }
+    
+    .application-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    }
+    
+    .status-badge {
+        padding: 0.75rem 1.5rem;
+        border-radius: 30px;
+        font-weight: bold;
+        font-size: 1rem;
+        white-space: nowrap;
+        margin-left: auto;
+    }
+    
+    .status-pending {
+        background: linear-gradient(45deg, #f59e0b, #fbbf24);
+        color: white;
+    }
+    
+    .status-approved {
+        background: linear-gradient(45deg, #10b981, #34d399);
+        color: white;
+    }
+    
+    .status-rejected {
+        background: linear-gradient(45deg, #ef4444, #f87171);
+        color: white;
+    }
+    
+    .status-withdrawn {
+        background: linear-gradient(45deg, #6b7280, #9ca3af);
+        color: white;
+    }
+    
+    .application-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 2px solid #f1f5f9;
+    }
+    
+    .application-photo {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #e2e8f0;
+        margin-right: 2rem;
+        flex-shrink: 0;
+    }
+    
+    .application-details {
+        flex: 1;
+    }
+    
+    .application-title {
+        font-size: 1.75rem;
+        font-weight: bold;
+        color: #1e293b;
+        margin-bottom: 0.75rem;
+        line-height: 1.3;
+    }
+    
+    .application-meta {
+        color: #64748b;
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+    
+    .manifesto-preview {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        margin: 1rem 0;
+        border-left: 4px solid var(--brand-yellow, #f4cc5c);
+    }
+    
+    .manifesto-text {
+        color: #475569;
+        line-height: 1.6;
+        margin: 0;
+    }
+    
+    .application-actions {
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 2px solid #e2e8f0;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .btn-action {
+        padding: 0.75rem 2rem;
+        border-radius: 30px;
+        font-weight: bold;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+        min-width: 140px;
+        text-align: center;
+    }
+    
+    .btn-view {
+        background: var(--brand-green, #0b6e3b);
+        color: #fff;
+        border: 1px solid #075a30;
+    }
+    
+    .btn-view:hover {
+        transform: translateY(-2px);
+        color: white;
+    }
+    
+    .btn-withdraw {
+        background: #ef4444;
+        color: #fff;
+        border: 1px solid #b91c1c;
+    }
+    
+    .btn-withdraw:hover {
+        transform: translateY(-2px);
+        color: white;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #64748b;
+    }
+    
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        color: #cbd5e1;
+    }
+    
+    .timeline {
+        position: relative;
+        padding-left: 2rem;
+    }
+    
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 0.75rem;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: #e2e8f0;
+    }
+    
+    .timeline-item {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+    
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -1.75rem;
+        top: 0.5rem;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #667eea;
+        border: 3px solid white;
+        box-shadow: 0 0 0 3px #e2e8f0;
+    }
+    
+    .timeline-content {
+        background: white;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    /* Give this page's header a distinct colored band to avoid "all white" look */
+    .applications-header {
+        background: linear-gradient(135deg, var(--brand-green, #0b6e3b) 0%, #0a5b33 100%) !important;
+        color: #fff !important;
+        border: none !important;
+    }
+    
+    /* Responsive improvements */
+    @media (max-width: 768px) {
+        .application-card { padding: 1.25rem; margin-bottom: 1rem; }
+        
+        .application-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .status-badge { margin-left: 0; margin-top: 0.75rem; }
+        
+        .application-photo { width: 72px; height: 72px; margin-right: 0.75rem; margin-bottom: 0.75rem; }
+        
+        .application-title { font-size: 1.25rem; }
+        
+        .btn-action { min-width: 110px; padding: 0.55rem 1.25rem; }
+        .application-actions { gap: 0.75rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- CSRF Token for AJAX calls -->
+    {% csrf_token %}
+    
+    <!-- Header -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header applications-header">
+                    <h2 class="mb-0">
+                        <i class="fas fa-file-alt me-2"></i>
+                        My Candidate Applications
+                    </h2>
+                    <p class="mb-0 mt-2">Track the status of your candidate applications</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if applications %}
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10 col-xl-8">
+                {% for application in applications %}
+                <div class="application-card">
+                    <div class="application-header">
+                        <div class="d-flex align-items-center">
+                            {% if application.photo %}
+                                <img src="{{ application.photo.url }}" alt="Application Photo" class="application-photo">
+                            {% else %}
+                                <div class="application-photo bg-light d-flex align-items-center justify-content-center">
+                                    <i class="fas fa-user fa-2x text-muted"></i>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="application-details">
+                                <div class="application-title">
+                                    {{ application.position.title }}
+                                </div>
+                                <div class="application-meta">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    {{ application.election.title }}<br>
+                                    <i class="fas fa-clock me-1"></i>
+                                    Applied on {{ application.submitted_at|date:"F d, Y \a\t g:i A" }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-end">
+                            <span class="status-badge status-{{ application.status }}">
+                                <i class="fas fa-{% if application.status == 'pending' %}clock{% elif application.status == 'approved' %}check{% elif application.status == 'rejected' %}times{% else %}minus{% endif %} me-1"></i>
+                                {{ application.get_status_display }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    {% if application.party or application.party_name %}
+                    <div class="mb-3">
+                        <strong><i class="fas fa-flag me-1"></i>Party:</strong> 
+                        {% if application.party %}
+                            {{ application.party.name }}
+                            {% if application.party.logo %}
+                                <img src="{{ application.party.logo.url }}" alt="{{ application.party.name }} Logo" class="ms-2" style="width: 24px; height: 24px; object-fit: contain;">
+                            {% endif %}
+                        {% else %}
+                            {{ application.party_name }}
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    
+                    {% if application.manifesto %}
+                    <div class="manifesto-preview">
+                        <h6 class="text-primary mb-2">
+                            <i class="fas fa-file-text me-1"></i>
+                            Campaign Manifesto
+                        </h6>
+                        <p class="manifesto-text">{{ application.manifesto|truncatewords:50 }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if application.status == 'rejected' and application.review_notes %}
+                    <div class="alert alert-danger">
+                        <h6><i class="fas fa-exclamation-triangle me-1"></i>Review Notes:</h6>
+                        <p class="mb-0">{{ application.review_notes }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if application.reviewed_at %}
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <h6 class="text-primary mb-1">
+                                    <i class="fas fa-{% if application.status == 'approved' %}check-circle{% else %}times-circle{% endif %} me-1"></i>
+                                    Application {{ application.get_status_display }}
+                                </h6>
+                                <p class="text-muted mb-0">
+                                    {% if application.reviewed_by %}
+                                        Reviewed by {{ application.reviewed_by.get_full_name|default:application.reviewed_by.username }}
+                                    {% endif %}
+                                    on {{ application.reviewed_at|date:"F d, Y \a\t g:i A" }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="application-actions">
+                        <a href="{% url 'voting_module:administration_dashboard' %}" class="btn-action btn-view">
+                            <i class="fas fa-eye me-1"></i>
+                            View Election
+                        </a>
+                        
+                        {% if application.status == 'pending' %}
+                        <button type="button" class="btn-action btn-withdraw" data-bs-toggle="modal" data-bs-target="#withdrawModal{{ application.id }}">
+                            <i class="fas fa-times me-1"></i>
+                            Withdraw Application
+                        </button>
+                        {% endif %}
+                        {% if application.status == 'rejected' %}
+                        <button type="button" class="btn-action btn-withdraw" data-bs-toggle="modal" data-bs-target="#deleteModal{{ application.id }}">
+                            <i class="fas fa-trash me-1"></i>
+                            Delete Application
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if application.status == 'pending' %}
+                <!-- Withdraw Modal -->
+                <div class="modal fade" id="withdrawModal{{ application.id }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title"><i class="fas fa-times me-2"></i>Withdraw Application</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to withdraw your application for <strong>{{ application.position.title }}</strong>?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-danger" onclick="withdrawApplication({{ application.id }})">Confirm Withdraw</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if application.status == 'rejected' %}
+                <!-- Delete Modal -->
+                <div class="modal fade" id="deleteModal{{ application.id }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title"><i class="fas fa-trash me-2"></i>Delete Application</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                Delete your rejected application for <strong>{{ application.position.title }}</strong>? This cannot be undone.
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-danger" onclick="deleteApplication({{ application.id }})">Confirm Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+            <i class="fas fa-file-alt"></i>
+            <h3>No Applications Yet</h3>
+            <p class="lead">You haven't submitted any candidate applications yet.</p>
+            <a href="{% url 'voting_module:candidate_application' %}" class="btn btn-primary-action btn-lg">
+                Apply as Candidate
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Site-styled confirmation modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Please Confirm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="confirmModalMessage">Are you sure?</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmModalYesBtn">Confirm</button>
+            </div>
+        </div>
+    </div>
+ </div>
+
+<script>
+let confirmModalInstance = null;
+let confirmYesHandler = null;
+function openConfirm(message, onYes) {
+    const msgEl = document.getElementById('confirmModalMessage');
+    msgEl.textContent = message;
+    const yesBtn = document.getElementById('confirmModalYesBtn');
+    if (confirmYesHandler) {
+        yesBtn.removeEventListener('click', confirmYesHandler);
+    }
+    confirmYesHandler = function() {
+        if (confirmModalInstance) {
+            confirmModalInstance.hide();
+        }
+        onYes();
+    };
+    yesBtn.addEventListener('click', confirmYesHandler);
+    const modalEl = document.getElementById('confirmModal');
+    if (window.bootstrap && window.bootstrap.Modal) {
+        confirmModalInstance = new window.bootstrap.Modal(modalEl);
+        confirmModalInstance.show();
+    } else {
+        if (window.confirm(message)) onYes();
+    }
+}
+function withdrawApplication(applicationId) {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || getCookie('csrftoken');
+    fetch(`/withdraw-application/${applicationId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({})
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while withdrawing the application. Please try again.');
+    });
+}
+
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+function deleteApplication(applicationId) {
+    const csrfToken = getCookie('csrftoken') || document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+    fetch(`/delete-application/${applicationId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({})
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while deleting the application. Please try again.');
+    });
+}
+</script>
+{% endblock %}

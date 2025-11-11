@@ -1,0 +1,256 @@
+{%extends 'Static/base.html'%}
+{% load static %}
+
+{% block title %}Candidates Management - E-Botar{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin_module.css' %}?v=20251016">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Page Title -->
+    <div class="page-title-section">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h2 class="page-title">
+                    <i class="fas fa-users me-2"></i>
+                    Candidates Management
+                </h2>
+                <p class="page-subtitle">Manage all candidates across elections</p>
+            </div>
+            <div class="header-actions d-flex gap-2 flex-wrap">
+                <a class="btn-create" href="{% url 'admin_module:candidate_create' %}">
+                    New Candidate
+                </a>
+                <a class="btn-outline-elections" href="{% url 'admin_module:elections_list' %}">
+                    Elections
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="filter-section">
+        <h5><i class="fas fa-filter me-2"></i>Filter Candidates</h5>
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-5">
+                <label class="form-label">
+                    <i class="fas fa-search me-1"></i>
+                    Search
+                </label>
+                <input type="text" name="search" value="{{ search_query }}" class="form-control" placeholder="Name, course, year level..." />
+        </div>
+            <div class="col-md-5">
+                <label class="form-label">
+                    <i class="fas fa-crown me-1"></i>
+                    Position
+                </label>
+            <select name="position" class="form-select">
+                    <option value="">All Positions</option>
+                {% for p in positions %}
+                <option value="{{ p.id }}" {% if p.id|stringformat:'s' == selected_position %}selected{% endif %}>{{ p.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+            <div class="col-md-2">
+                <button class="btn-filter w-100" type="submit">
+                    Filter
+                </button>
+        </div>
+    </form>
+    </div>
+
+    <!-- Table -->
+    {% if candidates %}
+    <div class="table-container">
+    <div class="table-responsive">
+            <table class="table align-middle">
+            <thead>
+                <tr>
+                        <th><i class="fas fa-user me-1"></i> Name</th>
+                        <th><i class="fas fa-crown me-1"></i> Position</th>
+                        <th><i class="fas fa-graduation-cap me-1"></i> Course / Year</th>
+                        <th><i class="fas fa-toggle-on me-1"></i> Status</th>
+                        <th class="text-end"><i class="fas fa-cog me-1"></i> Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in candidates %}
+                <tr>
+                        <td><strong>{{ c.user.get_full_name }}</strong></td>
+                    <td>{{ c.position.name }}</td>
+                    <td>
+                        {% if c.user.profile.course %}
+                            {{ c.user.profile.course.name }}
+                        {% endif %}
+                        {% if c.user.profile.year_level %} / {{ c.user.profile.year_level }}{% endif %}
+                    </td>
+                        <td>
+                            {% if c.is_active %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check me-1"></i>Active
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary">
+                                    <i class="fas fa-times me-1"></i>Inactive
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <div class="d-flex justify-content-end gap-2 flex-wrap">
+                                <button type="button"
+                                        class="btn btn-sm btn-outline-primary"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editCandidateModal"
+                                        data-candidate-id="{{ c.id }}"
+                                        data-candidate-name="{{ c.user.get_full_name|escapejs }}"
+                                        data-party-id="{% if c.party %}{{ c.party.id }}{% endif %}"
+                                        data-is-active="{{ c.is_active|yesno:'1,0' }}"
+                                        data-edit-url="{% url 'admin_module:candidate_edit' c.id %}">
+                                    <i class="fas fa-edit me-1"></i>Edit
+                                </button>
+                                <button type="button"
+                                        class="btn btn-sm btn-outline-danger"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteCandidateModal"
+                                        data-candidate-id="{{ c.id }}"
+                                        data-candidate-name="{{ c.user.get_full_name|escapejs }}">
+                                    <i class="fas fa-trash me-1"></i>Delete
+                                </button>
+                            </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    </div>
+    {% else %}
+    <!-- Empty State -->
+    <div class="empty-state">
+        <div class="empty-state-icon">
+            <i class="fas fa-users"></i>
+        </div>
+        <h4>No Candidates Found</h4>
+        <p class="text-muted">Try adjusting your search filters or create a new candidate.</p>
+    </div>
+    {% endif %}
+
+    <!-- Back Button -->
+    <div class="mt-4">
+        <a class="btn-back" href="{% url 'admin_module:admin_dashboard' %}">
+            Back to Admin Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function confirmDeleteWithMemo(formEl, name) {
+    var memo = prompt('Please provide a memo/reason for deleting/disqualifying ' + name + ':');
+    if (memo === null) { return false; }
+    memo = memo.trim();
+    if (!memo) {
+        alert('A memo/reason is required.');
+        return false;
+    }
+    formEl.querySelector('input[name="reason"]').value = memo;
+    return true;
+}
+</script>
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteCandidateModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" action="{% url 'admin_module:candidate_delete' %}">
+        {% csrf_token %}
+        <input type="hidden" name="candidate_id" id="deleteCandidateId">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>Confirm Delete</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>You're about to delete <strong id="deleteCandidateName"></strong>.</p>
+          <div class="mb-3">
+            <label class="form-label">Memo / Reason<span class="text-danger">*</span></label>
+            <textarea class="form-control" name="reason" id="deleteReason" rows="3" placeholder="Enter the reason (e.g., disqualification details)" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </div>
+      </form>
+    </div>
+  </div>
+ </div>
+
+<!-- Quick Edit Modal (inline) -->
+<div class="modal fade" id="editCandidateModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" id="quickEditForm">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-user-edit me-2"></i>Edit Candidate</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input type="text" class="form-control" id="editCandidateName" disabled>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Party</label>
+            <select class="form-select" name="party" id="editParty">
+              <option value="">No Party (Independent)</option>
+              {% for party in parties %}
+                <option value="{{ party.id }}">{{ party.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="1" id="editIsActive" name="is_active">
+            <label class="form-check-label" for="editIsActive">Active</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+// Wire up modals
+var deleteModal = document.getElementById('deleteCandidateModal');
+deleteModal && deleteModal.addEventListener('show.bs.modal', function (event) {
+  var button = event.relatedTarget;
+  var id = button.getAttribute('data-candidate-id');
+  var name = button.getAttribute('data-candidate-name');
+  document.getElementById('deleteCandidateId').value = id;
+  document.getElementById('deleteCandidateName').innerText = name;
+  document.getElementById('deleteReason').value = '';
+});
+
+var editModal = document.getElementById('editCandidateModal');
+editModal && editModal.addEventListener('show.bs.modal', function (event) {
+  var button = event.relatedTarget;
+  var name = button.getAttribute('data-candidate-name');
+  var partyId = button.getAttribute('data-party-id') || '';
+  var isActive = button.getAttribute('data-is-active') === '1';
+  var editUrl = button.getAttribute('data-edit-url');
+  document.getElementById('editCandidateName').value = name;
+  var select = document.getElementById('editParty');
+  if (select) { select.value = partyId; }
+  document.getElementById('editIsActive').checked = isActive;
+  var form = document.getElementById('quickEditForm');
+  form.action = editUrl; // submit to existing edit endpoint
+});
+</script>
+{% endblock %}
+

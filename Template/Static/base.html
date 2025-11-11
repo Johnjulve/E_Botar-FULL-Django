@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}E-Botar Voting System{% endblock %}</title>
+    
+    {% load static %}
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'vendor/fontawesome/css/all.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/custom.css' %}" rel="stylesheet">
+    <link href="{% static 'css/buttons.css' %}" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary-color: #64748b;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --info-color: #06b6d4;
+            --light-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            /* Brand palette (logo-based) */
+            --brand-green: #0b6e3b;          /* primary green from header */
+            --brand-green-dark: #075a30;     /* darker green */
+            --brand-yellow: #f4cc5c;         /* yellow used in sidebars */
+            --brand-yellow-dark: #e6b93e;    /* deeper yellow for contrast */
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%) !important;
+            box-shadow: var(--shadow-lg);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.75rem;
+            color: white !important;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            transform: translateY(-1px);
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            padding: 0.75rem 1.25rem !important;
+            border-radius: 8px;
+            margin: 0 0.25rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .navbar-nav .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .navbar-nav .nav-link:hover::before {
+            left: 100%;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: white !important;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .navbar-nav .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white !important;
+            font-weight: 600;
+        }
+
+        .navbar-toggler {
+            border: none;
+            padding: 0.5rem;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: none;
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.9%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-color), #f97316);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .dropdown-menu {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: var(--shadow-xl);
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .dropdown-item {
+            color: var(--text-primary);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .dropdown-item:hover {
+            background: var(--light-bg);
+            color: var(--primary-color);
+            transform: translateX(4px);
+        }
+
+        .dropdown-item i {
+            width: 20px;
+            margin-right: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .main-content {
+            min-height: calc(100vh - 200px);
+            padding: 2rem 0;
+        }
+
+        /* Unified Navigation Header Styles */
+        .unified-nav-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .nav-header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+
+        .nav-brand-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-shrink: 0;
+        }
+
+        .nav-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-color) 0%, #f97316 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            box-shadow: var(--shadow-md);
+        }
+
+        .nav-logo-inner {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--accent-color);
+        }
+
+        .nav-university-text {
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-align: center;
+            line-height: 1.3;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            letter-spacing: 0.5px;
+        }
+
+        .nav-main {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .nav-link-main {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link-main:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+            transform: translateY(-1px);
+        }
+
+        .nav-link-main.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-weight: 600;
+        }
+
+        .nav-user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-shrink: 0;
+        }
+
+        .nav-user-menu {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-user-menu:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            transform: translateY(-1px);
+        }
+
+        .nav-user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-color), #f97316);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-username {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .nav-btn {
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-btn-login {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-btn-login:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            transform: translateY(-1px);
+        }
+
+        .nav-btn-register {
+            background: white;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .nav-btn-register:hover {
+            background: #f8f9fa;
+            color: var(--primary-color);
+            text-decoration: none;
+            transform: translateY(-1px);
+        }
+
+        .nav-mobile-toggle {
+            display: none;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-mobile-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .nav-mobile-menu {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-mobile-link {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .nav-mobile-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            text-decoration: none;
+            transform: translateX(4px);
+        }
+
+        .nav-mobile-link.active {
+            background: rgba(255, 255, 255, 0.2);
+            font-weight: 600;
+        }
+
+        .nav-mobile-link:last-child {
+            margin-bottom: 0;
+        }
+
+        .nav-mobile-divider {
+            border-color: rgba(255, 255, 255, 0.2);
+            margin: 1rem 0;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--light-bg) 0%, #f1f5f9 100%);
+            border-bottom: 1px solid var(--border-color);
+            border-radius: 16px 16px 0 0 !important;
+            padding: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .progress {
+            height: 12px;
+            border-radius: 6px;
+            background: var(--light-bg);
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 6px;
+            transition: width 0.6s ease;
+        }
+
+        /* Simple Top Bar */
+        .topbar { background:#0b6e3b; color:#fff; padding:10px 0; position:sticky; top:0; z-index:1000; box-shadow:var(--shadow-lg); }
+        .brand-logo { width:52px; height:52px; border-radius:50%; object-fit:cover;}
+        .brand-text { color:#fff; font-weight:700; line-height:1.1; letter-spacing:.2px; text-transform:uppercase; font-size:.85rem; }
+        .menu-btn { border:none; background:transparent; color:#fff; font-size:1.5rem; line-height:1; }
+
+        /* Neutral pill buttons */
+        .btn-pill { border-radius:999px; padding:.5rem 1rem; font-weight:600; border:1px solid var(--border-color); background:#fff; color:var(--text-primary); }
+        .btn-pill:hover { background:#f8fafc; color:var(--text-primary); border-color:#cbd5e1; }
+
+        /* Floating pill inside buttons */
+        .btn .btn-pill {
+            position: absolute;
+            left: 6px;
+            right: 6px;
+            top: 6px;
+            bottom: 6px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            background: #fff;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            pointer-events: none;
+        }
+
+        .btn {
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Disable glossy/shining sweep animation on buttons site-wide */
+        .btn::before { content: none !important; display: none !important; }
+        .btn:hover::before { content: none !important; display: none !important; }
+
+        /* Brand primary action button - consistent across pages */
+        .btn-primary-action {
+            background: var(--brand-green, #0b6e3b);
+            color: #fff;
+            border: 1px solid var(--brand-green-dark, #075a30);
+            border-radius: 12px;
+            font-weight: 700;
+            padding: .9rem 1.25rem;
+            box-shadow: 0 6px 18px rgba(11,110,59,.15);
+        }
+        .btn-primary-action:hover {
+            background: var(--brand-green, #0b6e3b);
+            color: #fff;
+            border-color: var(--brand-green-dark, #075a30);
+            box-shadow: 0 8px 22px rgba(11,110,59,.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning-color), #d97706);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-color), #dc2626);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-outline-primary {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            background: transparent;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-vote {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: white;
+            font-size: 1.1rem;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+        }
+
+        .btn-vote:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-xl);
+            color: white;
+        }
+
+        .poll-stats {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            color: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .poll-stats::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .footer {
+            /* Brand-aligned footer using university green tones */
+            background: linear-gradient(135deg, var(--brand-green) 0%, var(--brand-green-dark) 100%);
+            color: white;
+            padding: 3rem 0 2rem;
+            margin-top: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            /* Yellow accent stripe matching the logo */
+            background: linear-gradient(90deg, var(--brand-yellow), var(--brand-yellow-dark), var(--brand-yellow));
+        }
+
+        .footer-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer h5 {
+            color: var(--brand-yellow);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .footer p, .footer a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: var(--brand-yellow);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 2rem;
+            padding-top: 2rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Side menu styling (pill-like items) */
+        .offcanvas.offcanvas-end { 
+            width: 320px; 
+            background: #f4cc5c;
+            display: flex;
+            flex-direction: column;
+        }
+        .offcanvas .offcanvas-body { 
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+            padding-bottom: 0;
+            overflow-y: auto;
+            flex: 1;
+            position: relative;
+        }
+        .offcanvas .list-group { 
+            gap: 10px;
+            flex: 0 1 auto;
+            padding-bottom: 100px; /* Space for the fixed green button */
+        }
+        .offcanvas .list-group-item { 
+            border: 0; border-radius: 12px; background: rgba(255,255,255,0.35);
+            font-weight: 700; color: #1f2937; padding: 16px 18px;
+            transition: transform .15s ease, background .2s ease; 
+        }
+        .offcanvas .list-group-item:hover { transform: translateX(-3px); text-decoration: none; color: #111827; }
+        .offcanvas .list-group-item.active { background: #fde68a; color: #111827; box-shadow: inset 0 0 0 2px rgba(0,0,0,0.05); }
+        .offcanvas .user-pill { 
+            margin-top: auto;
+            margin-left: 0;
+            margin-right: 0;
+            margin-bottom: 16px;
+            flex-shrink: 0;
+            background: #0e9f6e; 
+            color:#fff; 
+            border-radius: 999px; 
+            padding: 10px 14px; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1), var(--shadow-lg); 
+            position: sticky;
+            bottom: 0;
+            z-index: 100;
+        }
+        .offcanvas .user-pill::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: -16px;
+            right: -16px;
+            height: 40px;
+            background: linear-gradient(to bottom, transparent, #f4cc5c 70%);
+            pointer-events: none;
+        }
+        .offcanvas .user-pill .avatar { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,.2); display:inline-flex; align-items:center; justify-content:center; font-weight:700; }
+        
+        /* Menu groups and sub-items styling for mobile */
+        .offcanvas .menu-group { display: flex; flex-direction: column; gap: 4px; }
+        .offcanvas .menu-group .collapse { margin-top: 4px; padding-left: 0.5rem; }
+        .offcanvas .menu-group .collapse.show { display: flex; flex-direction: column; gap: 4px; }
+        .offcanvas .menu-group .collapse .list-group-item { padding: 12px 18px; font-size: 0.95em; }
+        
+        /* Custom scrollbar for mobile sidebar */
+        .offcanvas .offcanvas-body::-webkit-scrollbar {
+            width: 6px;
+        }
+        .offcanvas .offcanvas-body::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+        .offcanvas .offcanvas-body::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+        .offcanvas .offcanvas-body::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Desktop persistent sidebar */
+        .desktop-sidebar { display: none; position: fixed; top: 64px; left: 0; width: 300px; height: calc(100vh - 64px); background: #f4cc5c; padding: 16px; box-shadow: var(--shadow-lg); z-index: 950; }
+        .desktop-sidebar .menu { display: grid; gap: 10px; padding-bottom: 120px; /* space for the green user pill */ overflow-y: auto; max-height: calc(100% - 20px); }
+        /* Optional: smoother scrollbar for desktop sidebar menu */
+        .desktop-sidebar .menu::-webkit-scrollbar { width: 6px; }
+        .desktop-sidebar .menu::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 3px; }
+        .desktop-sidebar .menu::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 3px; }
+        .desktop-sidebar .side-item { border: 0; border-radius: 12px; background: rgba(255,255,255,0.35); font-weight: 700; color: #1f2937; padding: 16px 18px; transition: transform .15s ease, background .2s ease; text-decoration: none; }
+        .desktop-sidebar .side-item:hover { transform: translateX( -3px ); color: #111827; text-decoration: none; }
+        .desktop-sidebar .side-item.active { background: #fde68a; color: #111827; box-shadow: inset 0 0 0 2px rgba(0,0,0,0.05); }
+        .desktop-sidebar .user-pill { position: absolute; left: 16px; right: 16px; bottom: 16px; background: #0e9f6e; color:#fff; border-radius: 999px; padding: 10px 14px; display:flex; align-items:center; gap: 10px; box-shadow: var(--shadow-lg); }
+        .desktop-sidebar .user-pill .avatar { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,.2); display:inline-flex; align-items:center; justify-content:center; font-weight:700; }
+        
+        /* Menu groups and sub-items styling */
+        .desktop-sidebar .menu-group { display: flex; flex-direction: column; gap: 4px; }
+        .desktop-sidebar .menu-group .collapse { margin-top: 4px; padding-left: 0.5rem; }
+        .desktop-sidebar .menu-group .collapse.show { display: flex; flex-direction: column; gap: 4px; }
+        .desktop-sidebar .menu-group .collapse .side-item { padding: 12px 18px; font-size: 0.95em; }
+
+        @media (min-width: 992px) {
+            .desktop-sidebar { display: block; }
+            .main-content { margin-left: 300px; }
+            .footer { margin-left: 300px; }
+        }
+
+        /* Slide-in pill toasts */
+        .toast-stack { position: fixed; top: 90px; right: 16px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .pill-toast { background: #0f172a; color: #fff; border-radius: 999px; padding: 10px 14px; display: inline-flex; align-items: center; gap: 10px; box-shadow: var(--shadow-lg); transform: translateX(120%); opacity: 0; transition: transform .4s ease, opacity .4s ease; pointer-events: auto; }
+        .pill-toast.success { background: #065f46; }
+        .pill-toast.error { background: #7f1d1d; }
+        .pill-toast.info { background: #1e3a8a; }
+        .pill-toast.warning { background: #92400e; }
+        .pill-toast.show { transform: translateX(0); opacity: 1; }
+        .pill-toast button.close { background: rgba(255,255,255,.2); border: none; color: #fff; border-radius: 999px; width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+
+        @media (max-width: 768px) {
+            .navbar-nav .nav-link {
+                margin: 0.25rem 0;
+                text-align: center;
+            }
+
+            .user-menu {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .main-content {
+                padding: 1rem 0;
+            }
+
+            /* Unified Navigation Responsive */
+            .nav-header-content {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .nav-main {
+                display: none;
+            }
+
+            .nav-user-section {
+                display: none;
+            }
+
+            .nav-mobile-toggle {
+                display: block;
+            }
+
+            .nav-brand-section {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .nav-university-text {
+                font-size: 0.75rem;
+            }
+
+            .nav-logo {
+                width: 50px;
+                height: 50px;
+            }
+
+            .nav-logo-inner {
+                width: 38px;
+                height: 38px;
+                font-size: 1.25rem;
+            }
+            
+            /* Mobile sidebar improvements for small screens */
+            .offcanvas.offcanvas-end { 
+                width: 100%; 
+                max-width: 320px; 
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Extra small screens */
+            .offcanvas .list-group-item { 
+                padding: 12px 16px; /* Slightly smaller padding on very small screens */
+            }
+        }
+
+        @media (min-width: 769px) {
+            .nav-mobile-toggle {
+                display: none;
+            }
+
+            .nav-mobile-menu {
+                display: none;
+            }
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Simple Top Bar -->
+    <header class="topbar">
+        <div class="container d-flex align-items-center justify-content-between">
+            <a href="{% url 'home' %}" class="brand d-flex align-items-center gap-2" style="text-decoration:none; color:inherit; user-select:none; -webkit-user-select:none; -ms-user-select:none;">
+                <img src="{% static 'images/logo.png' %}" alt="Logo" class="brand-logo" draggable="false" ondragstart="return false;" onmousedown="return true;" />
+                <span class="brand-text" style="user-select:none; -webkit-user-select:none; -ms-user-select:none;">SURIGAO DEL NORTE<br>STATE UNIVERSITY</span>
+            </a>
+            <button class="menu-btn d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mainMenu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Offcanvas menu -->
+    <div class="offcanvas offcanvas-end d-lg-none" tabindex="-1" id="mainMenu">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">Menu</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <nav class="list-group">
+                {% include 'Static/_menu_links.html' with item_class='list-group-item list-group-item-action' %}
+            </nav>
+            {% if user.is_authenticated %}
+            <a class="user-pill" href="{% url 'auth_module:profile' %}" style="text-decoration:none;">
+                {% if user.profile and user.profile.avatar %}
+                <img src="{{ user.profile.avatar.url }}" alt="Avatar" class="avatar" style="width:32px; height:32px; border-radius:50%; object-fit:cover;">
+                {% else %}
+                <div class="avatar">{{ user.username|first|upper }}</div>
+                {% endif %}
+                <div>
+                    <div style="line-height:1; font-weight:700;">{{ user.get_full_name|default:user.username }}</div>
+                    <div style="opacity:.85; font-size:.8rem;">{{ user.email }}</div>
+                </div>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Desktop sidebar -->
+    <aside class="desktop-sidebar d-none d-lg-block">
+        <div class="menu">
+            {% include 'Static/_menu_links.html' with item_class='side-item' %}
+        </div>
+        {% if user.is_authenticated %}
+        <a class="user-pill" href="{% url 'auth_module:profile' %}" style="text-decoration:none;">
+            {% if user.profile and user.profile.avatar %}
+            <img src="{{ user.profile.avatar.url }}" alt="Avatar" class="avatar" style="width:32px; height:32px; border-radius:50%; object-fit:cover;">
+            {% else %}
+            <div class="avatar">{{ user.username|first|upper }}</div>
+            {% endif %}
+            <div>
+                <div style="line-height:1; font-weight:700;">{{ user.get_full_name|default:user.username }}</div>
+                <div style="opacity:.85; font-size:.8rem;">{{ user.email }}</div>
+            </div>
+        </a>
+        {% endif %}
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h5><i class="fas fa-vote-yea me-2"></i>E-Botar</h5>
+                        <p>Empowering democratic decision-making through secure and transparent voting systems.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h5><i class="fas fa-link me-2"></i>Quick Links</h5>
+                        <p><a href="{% url 'admin_module:admin_dashboard' %}">Dashboard</a></p>
+                        <p><a href="{% url 'election_module:school_election_list' %}">School Elections</a></p>
+                    </div>
+                    <div class="col-md-4">
+                        <h5><i class="fas fa-info-circle me-2"></i>About</h5>
+                        <p>A comprehensive voting platform designed for educational institutions and community engagement.</p>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2024 E-Botar Voting System. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS (local) -->
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    
+    {% block extra_js %}{% endblock %}
+
+    <!-- Slide-in toast logic -->
+    {% if messages %}
+    <div class="toast-stack" id="toastStack">
+        {% for message in messages %}
+        <div class="pill-toast {{ message.tags|default:'info' }}">
+            <span>{{ message }}</span>
+            <button class="close" aria-label="Close" onclick="this.parentElement.remove()">×</button>
+        </div>
+        {% endfor %}
+    </div>
+    <script>
+        (function(){
+            const toasts = document.querySelectorAll('.pill-toast');
+            toasts.forEach((t, i) => {
+                setTimeout(() => t.classList.add('show'), 100 + i*80);
+                const ttl = 4500 + i*200;
+                setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, ttl);
+            });
+        })();
+    </script>
+    {% endif %}
+</body>
+</html>
+

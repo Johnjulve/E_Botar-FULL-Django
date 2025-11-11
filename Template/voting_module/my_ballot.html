@@ -1,0 +1,275 @@
+{% extends 'Static/base.html' %}
+{% load static %}
+
+{% block title %}My Ballot - {{ election.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #2563eb;
+        --success-color: #10b981;
+        --card-bg: #ffffff;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --border-color: #e2e8f0;
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    }
+
+    body {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    }
+
+    .ballot-container {
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .page-title {
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .election-title {
+        text-align: center;
+        font-size: 1.5rem;
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+    }
+
+    .receipt-card {
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border: 2px solid var(--primary-color);
+        box-shadow: var(--shadow-lg);
+        text-align: center;
+    }
+
+    .receipt-label {
+        font-size: 0.875rem;
+        color: #1e40af;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 0.5rem;
+    }
+
+    .receipt-code {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #1e3a8a;
+        font-family: 'Courier New', monospace;
+        letter-spacing: 3px;
+    }
+
+    .voted-at {
+        font-size: 0.875rem;
+        color: #3b82f6;
+        margin-top: 0.5rem;
+    }
+
+    .ballot-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        border: 2px solid var(--border-color);
+        box-shadow: var(--shadow-md);
+    }
+
+    .ballot-item {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .ballot-item:last-child {
+        border-bottom: none;
+    }
+
+    .position-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 0.5rem;
+    }
+
+    .position-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--success-color);
+        margin-bottom: 1rem;
+    }
+
+    .candidate-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .vote-icon {
+        font-size: 2rem;
+        color: var(--success-color);
+    }
+
+    .candidate-details {
+        flex: 1;
+    }
+
+    .candidate-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+    }
+
+    .candidate-party {
+        font-size: 1rem;
+        color: var(--text-secondary);
+    }
+
+    .party-badge {
+        display: inline-block;
+        background: var(--success-color);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 0.75rem 2rem;
+        border-radius: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: var(--primary-color);
+        color: white;
+        box-shadow: var(--shadow-md);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .btn-secondary {
+        background: #6b7280;
+        color: white;
+        box-shadow: var(--shadow-md);
+    }
+
+    .btn-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+        background: #4b5563;
+    }
+
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 1.75rem;
+        }
+
+        .receipt-code {
+            font-size: 1.5rem;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ballot-container">
+    <h1 class="page-title">
+        <i class="fas fa-vote-yea"></i> My Ballot
+    </h1>
+    <div class="election-title">{{ election.title }}</div>
+
+    <!-- Receipt Card -->
+    {% if receipt_code %}
+    <div class="receipt-card">
+        <div class="receipt-label"><i class="fas fa-receipt"></i> Your Verification Receipt</div>
+        <div class="receipt-code">{{ receipt_code }}</div>
+        <div class="voted-at">
+            <i class="fas fa-clock"></i> Voted on {{ voted_at|date:"F j, Y" }} at {{ voted_at|time:"g:i A" }}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Ballot Details -->
+    <div class="ballot-card">
+        <h2 style="text-align: center; margin-bottom: 2rem; color: var(--text-primary);">
+            <i class="fas fa-ballot-check"></i> Your Votes
+        </h2>
+
+        {% for item in ballot_items %}
+        <div class="ballot-item">
+            <div class="position-label">Position</div>
+            <div class="position-title">
+                <i class="fas fa-crown"></i> {{ item.position }}
+            </div>
+            
+            <div class="candidate-info">
+                <div class="vote-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="candidate-details">
+                    <div class="candidate-name">{{ item.candidate }}</div>
+                    {% if item.party %}
+                    <div class="candidate-party">
+                        <span class="party-badge">{{ item.party }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <a href="{% url 'voting_module:school_election_results' election.id %}" class="btn btn-primary">
+            <i class="fas fa-chart-bar"></i> View Results
+        </a>
+        <a href="{% url 'voting_module:my_voting_history' %}" class="btn btn-secondary">
+            <i class="fas fa-history"></i> Voting History
+        </a>
+        <a href="{% url 'voting_module:school_election_list' %}" class="btn btn-secondary">
+            <i class="fas fa-list"></i> All Elections
+        </a>
+    </div>
+</div>
+{% endblock %}
+

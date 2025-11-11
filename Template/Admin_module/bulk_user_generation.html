@@ -1,0 +1,368 @@
+{%extends 'Static/base.html'%}
+{% load static %}
+
+{% block title %}Bulk User Generation{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin_module.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px;">
+    <h2 class="mb-3">Bulk User Generation</h2>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    <div class="card p-4" style="border-radius: 16px;">
+        <div class="row g-3">
+            <div class="col-12">
+                <h5>Generate Random User Accounts</h5>
+                <p class="text-muted">Create multiple user accounts with realistic data that blends with your system.</p>
+            </div>
+            
+            <form method="post" id="bulkGenerationForm">
+                {% csrf_token %}
+                
+                <div class="col-md-6">
+                    <label class="form-label">Number of Users to Generate</label>
+                    <input type="number" class="form-control" name="count" value="10" min="1" max="100" required>
+                    <small class="text-muted">Maximum 100 users per generation</small>
+                </div>
+                
+                <div class="col-md-6">
+                    <label class="form-label">Default Password</label>
+                    <input type="text" class="form-control" name="password" value="password123" required>
+                    <small class="text-muted">All users will have this password initially</small>
+                </div>
+                
+                <div class="col-md-6">
+                    <label class="form-label">Department (Optional)</label>
+                    <div class="card bg-light p-3">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" name="randomize_department" id="randomizeDepartment" value="1">
+                            <label class="form-check-label" for="randomizeDepartment">
+                                <strong>Randomize departments</strong>
+                            </label>
+                        </div>
+                        <select class="form-select" name="department_id" id="departmentSelect">
+                            <option value="">No specific department</option>
+                            {% for department in departments %}
+                            <option value="{{ department.id }}" data-department-name="{{ department.name }}">{{ department.name }} ({{ department.code }})</option>
+                            {% endfor %}
+                        </select>
+                        <small class="text-muted">Users will be assigned to this department (or random if randomization is enabled)</small>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <label class="form-label">Course (Optional)</label>
+                    <div class="card bg-light p-3">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" name="randomize_course" id="randomizeCourse" value="1">
+                            <label class="form-check-label" for="randomizeCourse">
+                                <strong>Randomize courses</strong>
+                            </label>
+                        </div>
+                        <select class="form-select" name="course_id" id="courseSelect" disabled>
+                            <option value="">Select a department first</option>
+                        </select>
+                        <small class="text-muted">Users will be enrolled in this course (or random if randomization is enabled)</small>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <label class="form-label">Year Level</label>
+                    <select class="form-select" name="year_level" id="yearLevelSelect">
+                        <option value="1">1st Year</option>
+                        <option value="2">2nd Year</option>
+                        <option value="3">3rd Year</option>
+                        <option value="4">4th Year</option>
+                        <option value="5">5th Year</option>
+                        <option value="random">Randomize (1-5)</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-6">
+                    <label class="form-label">Year Level Distribution (Optional)</label>
+                    <div class="card bg-light p-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="randomize_year_level" id="randomizeYearLevel" value="1">
+                            <label class="form-check-label" for="randomizeYearLevel">
+                                <strong>Randomize year levels</strong>
+                            </label>
+                        </div>
+                        <small class="text-muted">When enabled, each user will get a random year level (1-5) instead of the selected one</small>
+                        <div class="mt-2" id="yearLevelDistribution" style="display: none;">
+                            <label class="form-label small">Distribution:</label>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <label class="form-label small">1st Year: <span id="year1Percent">20%</span></label>
+                                    <input type="range" class="form-range" min="0" max="100" value="20" id="year1Range">
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small">2nd Year: <span id="year2Percent">20%</span></label>
+                                    <input type="range" class="form-range" min="0" max="100" value="20" id="year2Range">
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small">3rd Year: <span id="year3Percent">20%</span></label>
+                                    <input type="range" class="form-range" min="0" max="100" value="20" id="year3Range">
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small">4th Year: <span id="year4Percent">20%</span></label>
+                                    <input type="range" class="form-range" min="0" max="100" value="20" id="year4Range">
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small">5th Year: <span id="year5Percent">20%</span></label>
+                                    <input type="range" class="form-range" min="0" max="100" value="20" id="year5Range">
+                                </div>
+                            </div>
+                            <small class="text-muted">Adjust the distribution percentages (total should be 100%)</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Generated Data Includes:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>Realistic first and last names</li>
+                            <li>Unique usernames (firstname.lastname##)</li>
+                            <li>School email addresses (username@school.edu)</li>
+                            <li>Auto-generated student IDs (YYYY-#####)</li>
+                            <li>Verified user status</li>
+                            <li>Department and course assignments (based on your selections)</li>
+                            <li>Year level assignments</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-12">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Important:</strong> This will create real user accounts in your system. Make sure you have the necessary permissions and that this is what you intend to do.
+                    </div>
+                </div>
+                
+                <div class="col-12">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn-ebotar btn-ebotar-info" onclick="return confirm('Are you sure you want to generate these user accounts?');">
+                            <i class="fas fa-users"></i> Generate Users
+                        </button>
+                        <a class="btn-ebotar btn-ebotar-outline" href="{% url 'admin_module:user_management' %}">Cancel</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="card p-4 mt-4" style="border-radius: 16px;">
+        <h5>Recent Bulk Generations</h5>
+        <p class="text-muted">Check the activity logs to see recent bulk user generation activities.</p>
+        <a class="btn btn-outline-primary" href="{% url 'admin_module:activity_logs' %}">
+            <i class="fas fa-history"></i> View Activity Logs
+        </a>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const departmentSelect = document.getElementById('departmentSelect');
+    const courseSelect = document.getElementById('courseSelect');
+    const randomizeYearLevel = document.getElementById('randomizeYearLevel');
+    const yearLevelDistribution = document.getElementById('yearLevelDistribution');
+    const yearLevelSelect = document.getElementById('yearLevelSelect');
+    const randomizeDepartment = document.getElementById('randomizeDepartment');
+    const randomizeCourse = document.getElementById('randomizeCourse');
+    
+    // Course data from the server
+    const coursesData = [
+        {% for course in courses %}
+        {
+            id: {{ course.id }},
+            name: "{{ course.name }}",
+            code: "{{ course.code }}",
+            department_id: {{ course.department.id }}
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+    
+    // Department data from the server
+    const departmentsData = [
+        {% for department in departments %}
+        {
+            id: {{ department.id }},
+            name: "{{ department.name }}",
+            code: "{{ department.code }}"
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+    
+    // Handle department randomization checkbox
+    randomizeDepartment.addEventListener('change', function() {
+        if (this.checked) {
+            departmentSelect.disabled = true;
+            departmentSelect.value = '';
+        } else {
+            departmentSelect.disabled = false;
+        }
+    });
+    
+    // Handle course randomization checkbox
+    randomizeCourse.addEventListener('change', function() {
+        if (this.checked) {
+            courseSelect.disabled = true;
+            courseSelect.innerHTML = '<option value="">Random courses will be assigned</option>';
+        } else {
+            courseSelect.disabled = false;
+            // Reset course dropdown based on department selection
+            handleDepartmentChange();
+        }
+    });
+    
+    // Handle randomization checkbox
+    randomizeYearLevel.addEventListener('change', function() {
+        if (this.checked) {
+            yearLevelDistribution.style.display = 'block';
+            yearLevelSelect.disabled = true;
+            yearLevelSelect.value = 'random';
+        } else {
+            yearLevelDistribution.style.display = 'none';
+            yearLevelSelect.disabled = false;
+            yearLevelSelect.value = '1';
+        }
+    });
+    
+    // Handle distribution sliders
+    const yearRanges = ['year1Range', 'year2Range', 'year3Range', 'year4Range', 'year5Range'];
+    const yearPercentSpans = ['year1Percent', 'year2Percent', 'year3Percent', 'year4Percent', 'year5Percent'];
+    
+    yearRanges.forEach((rangeId, index) => {
+        const range = document.getElementById(rangeId);
+        const span = document.getElementById(yearPercentSpans[index]);
+        
+        range.addEventListener('input', function() {
+            span.textContent = this.value + '%';
+            normalizeDistribution();
+        });
+    });
+    
+    function normalizeDistribution() {
+        const ranges = yearRanges.map(id => document.getElementById(id));
+        const total = ranges.reduce((sum, range) => sum + parseInt(range.value), 0);
+        
+        if (total !== 100) {
+            // Auto-adjust to make total 100%
+            const adjustment = 100 - total;
+            const adjustmentPerRange = Math.floor(adjustment / 5);
+            const remainder = adjustment % 5;
+            
+            ranges.forEach((range, index) => {
+                let newValue = parseInt(range.value) + adjustmentPerRange;
+                if (index < remainder) newValue += 1;
+                range.value = Math.max(0, Math.min(100, newValue));
+                document.getElementById(yearPercentSpans[index]).textContent = range.value + '%';
+            });
+        }
+    }
+    
+    // Handle department selection change
+    function handleDepartmentChange() {
+        const selectedDepartmentId = departmentSelect.value;
+        
+        // Clear course options
+        courseSelect.innerHTML = '';
+        
+        if (selectedDepartmentId && !randomizeCourse.checked) {
+            // Enable course select
+            courseSelect.disabled = false;
+            
+            // Add default option
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'No specific course';
+            courseSelect.appendChild(defaultOption);
+            
+            // Filter courses by department
+            const departmentCourses = coursesData.filter(course => 
+                course.department_id == selectedDepartmentId
+            );
+            
+            // Add course options
+            departmentCourses.forEach(course => {
+                const option = document.createElement('option');
+                option.value = course.id;
+                option.textContent = `${course.name} (${course.code})`;
+                courseSelect.appendChild(option);
+            });
+            
+            // Update help text
+            const helpText = courseSelect.nextElementSibling;
+            helpText.textContent = `Users will be enrolled in this course (${departmentCourses.length} courses available)`;
+        } else if (!randomizeCourse.checked) {
+            // Disable course select
+            courseSelect.disabled = true;
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Select a department first';
+            courseSelect.appendChild(defaultOption);
+            
+            // Reset help text
+            const helpText = courseSelect.nextElementSibling;
+            helpText.textContent = 'Users will be enrolled in this course (only shows courses from selected department)';
+        }
+    }
+    
+    departmentSelect.addEventListener('change', handleDepartmentChange);
+    
+    // Form validation
+    const form = document.getElementById('bulkGenerationForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const count = parseInt(document.querySelector('input[name="count"]').value);
+            if (count < 1 || count > 100) {
+                e.preventDefault();
+                alert('Please enter a number between 1 and 100 for the count.');
+                return false;
+            }
+            
+            const password = document.querySelector('input[name="password"]').value;
+            if (!password || password.length < 6) {
+                e.preventDefault();
+                alert('Password must be at least 6 characters long.');
+                return false;
+            }
+            
+            // Validate course selection if department is selected and course randomization is not enabled
+            const departmentId = departmentSelect.value;
+            const courseId = courseSelect.value;
+            
+            if (departmentId && !courseId && !randomizeCourse.checked) {
+                e.preventDefault();
+                alert('Please select a course or choose "No specific course" if you don\'t want to assign users to a course.');
+                return false;
+            }
+            
+            // Validate year level distribution if randomization is enabled
+            if (randomizeYearLevel.checked) {
+                const ranges = yearRanges.map(id => document.getElementById(id));
+                const total = ranges.reduce((sum, range) => sum + parseInt(range.value), 0);
+                
+                if (total !== 100) {
+                    e.preventDefault();
+                    alert('Year level distribution percentages must total exactly 100%.');
+                    return false;
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

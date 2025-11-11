@@ -1,0 +1,166 @@
+{%extends 'Static/base.html'%}
+{% load static %}
+
+{% block title %}Delete Department{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin_module.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px;">
+    <h2 class="mb-3">Delete Department</h2>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    <div class="card p-4" style="border-radius: 16px;">
+        <div class="row g-3">
+            <div class="col-12">
+                <h5>Department Details</h5>
+                <div class="card bg-light p-3">
+                    <p class="mb-1"><strong>Name:</strong> {{ department.name }}</p>
+                    <p class="mb-1"><strong>Code:</strong> {{ department.code }}</p>
+                    <p class="mb-0"><strong>Description:</strong> {{ department.description|default:"No description" }}</p>
+                </div>
+            </div>
+            
+            {% if courses_count > 0 %}
+            <div class="col-12">
+                <h5>Connected Courses ({{ courses_count }})</h5>
+                <div class="card bg-warning bg-opacity-10 p-3">
+                    <p class="mb-2"><strong>Warning:</strong> This department has {{ courses_count }} course(s) assigned to it.</p>
+                    <div class="row">
+                        {% for course in courses %}
+                        <div class="col-md-6 mb-2">
+                            <div class="card bg-white p-2">
+                                <small><strong>{{ course.name }}</strong> ({{ course.code }})</small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-12">
+                <h5>Choose Action</h5>
+                <div class="card bg-light p-3">
+                    <form method="post" id="deleteForm">
+                        {% csrf_token %}
+                        <input type="hidden" name="department_id" value="{{ department.id }}">
+                        
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="action" id="deleteWithCourses" value="delete_with_courses">
+                                <label class="form-check-label" for="deleteWithCourses">
+                                    <strong>Delete Department and All Courses</strong>
+                                    <small class="text-muted d-block">This will permanently delete the department and all {{ courses_count }} course(s) assigned to it.</small>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        {% if other_departments %}
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="action" id="reassignCourses" value="reassign_courses">
+                                <label class="form-check-label" for="reassignCourses">
+                                    <strong>Reassign Courses to Another Department</strong>
+                                    <small class="text-muted d-block">This will move all courses to another department and then delete this department.</small>
+                                </label>
+                            </div>
+                            
+                            <div class="mt-2" id="departmentSelect" style="display: none;">
+                                <label for="new_department_id" class="form-label">Select Department:</label>
+                                <select class="form-select" name="new_department_id" id="new_department_id">
+                                    <option value="">Choose a department...</option>
+                                    {% for dept in other_departments %}
+                                    <option value="{{ dept.id }}">{{ dept.name }} ({{ dept.code }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Warning:</strong> This action cannot be undone. Please make sure you have selected the correct option.
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn-ebotar btn-ebotar-danger">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                            <a href="{% url 'admin_module:department_management' %}" class="btn-ebotar btn-ebotar-outline">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-12">
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <strong>Safe to Delete:</strong> This department has no courses assigned to it.
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="department_id" value="{{ department.id }}">
+                    <input type="hidden" name="action" value="delete_with_courses">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn-ebotar btn-ebotar-danger">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                        <a href="{% url 'admin_module:department_management' %}" class="btn-ebotar btn-ebotar-outline">Cancel</a>
+                    </div>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const reassignRadio = document.getElementById('reassignCourses');
+    const departmentSelect = document.getElementById('departmentSelect');
+    
+    if (reassignRadio && departmentSelect) {
+        reassignRadio.addEventListener('change', function() {
+            if (this.checked) {
+                departmentSelect.style.display = 'block';
+            } else {
+                departmentSelect.style.display = 'none';
+            }
+        });
+    }
+    
+    // Form validation
+    const form = document.getElementById('deleteForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const selectedAction = document.querySelector('input[name="action"]:checked');
+            if (!selectedAction) {
+                e.preventDefault();
+                alert('Please select an action before proceeding.');
+                return false;
+            }
+            
+            if (selectedAction.value === 'reassign_courses') {
+                const selectedDept = document.getElementById('new_department_id').value;
+                if (!selectedDept) {
+                    e.preventDefault();
+                    alert('Please select a department to reassign courses to.');
+                    return false;
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

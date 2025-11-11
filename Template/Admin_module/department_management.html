@@ -1,0 +1,401 @@
+{% extends 'Static/base.html' %}
+{% load static %}
+
+{% block title %}Department Management{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin_module.css' %}?v=20251016">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header Section -->
+    <div class="page-title-section">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="page-title">Department Management</h1>
+                <p class="page-subtitle">Manage departments and courses for the institution</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn-ebotar" data-bs-toggle="modal" data-bs-target="#createDepartmentModal">
+                    <i class="fas fa-plus me-1"></i>New Department
+                </button>
+                <button type="button" class="btn-ebotar-outline" data-bs-toggle="modal" data-bs-target="#importDepartmentModal">
+                    <i class="fas fa-upload me-1"></i>Import CSV
+                </button>
+                <a href="{% url 'admin_module:course_create' %}" class="btn-ebotar">
+                    <i class="fas fa-plus me-1"></i>New Course
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-building"></i>
+            </div>
+            <div class="stat-number">{{ total_departments }}</div>
+            <div class="stat-label">Departments</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <div class="stat-number">{{ total_courses }}</div>
+            <div class="stat-label">Courses</div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-building me-2"></i>Department Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createDepartmentModal">
+                            <i class="fas fa-plus me-1"></i>Create Department
+                        </button>
+                        <a href="{% url 'admin_module:department_export_csv' %}" class="btn btn-outline-success">
+                            <i class="fas fa-download me-1"></i>Export CSV
+                        </a>
+                        <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#importDepartmentModal">
+                            <i class="fas fa-upload me-1"></i>Import CSV
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-graduation-cap me-2"></i>Course Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'admin_module:course_management' %}" class="btn btn-primary">
+                            <i class="fas fa-external-link-alt me-1"></i>Go to Course Management
+                        </a>
+                        <a href="{% url 'admin_module:course_export_csv' %}" class="btn btn-outline-success">
+                            <i class="fas fa-download me-1"></i>Export CSV
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-tabs mb-4" id="managementTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="departments-tab" data-bs-toggle="tab" data-bs-target="#departments" type="button" role="tab">
+                <i class="fas fa-building me-1"></i>Departments
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="courses-tab" data-bs-toggle="tab" data-bs-target="#courses" type="button" role="tab">
+                <i class="fas fa-graduation-cap me-1"></i>Courses
+            </button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="managementTabsContent">
+        <!-- Departments Tab -->
+        <div class="tab-pane fade show active" id="departments" role="tabpanel">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Departments</h5>
+                        <div class="d-flex gap-2">
+                            <form method="get" class="d-flex">
+                                <input type="text" name="search" class="form-control" placeholder="Search departments..." value="{{ search_query }}">
+                                <button type="submit" class="btn btn-outline-primary">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if page_obj %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Code</th>
+                                        <th>Description</th>
+                                        <th>Courses</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for department in page_obj %}
+                                    <tr>
+                                        <td>
+                                            <div class="fw-semibold">{{ department.name }}</div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-primary">{{ department.code }}</span>
+                                        </td>
+                                        <td>
+                                            <div class="text-muted small">{{ department.description|truncatechars:50 }}</div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-info">{{ department.courses.count }}</span>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex gap-1">
+                                                <button type="button" class="btn btn-sm btn-outline-primary"
+                                                        data-bs-toggle="modal" data-bs-target="#editDepartmentModal"
+                                                        data-dept-id="{{ department.id }}"
+                                                        data-name="{{ department.name|escapejs }}"
+                                                        data-code="{{ department.code|escapejs }}"
+                                                        data-description="{{ department.description|escapejs }}">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-outline-danger"
+                                                        data-bs-toggle="modal" data-bs-target="#deleteDepartmentModal"
+                                                        data-dept-id="{{ department.id }}"
+                                                        data-name="{{ department.name|escapejs }}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        {% if page_obj.has_other_pages %}
+                        <nav aria-label="Department pagination">
+                            <ul class="pagination justify-content-center">
+                                {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}">First</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">Previous</a>
+                                </li>
+                                {% endif %}
+
+                                <li class="page-item active">
+                                    <span class="page-link">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                                </li>
+
+                                {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">Next</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}">Last</a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                        {% endif %}
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-building empty-state-icon"></i>
+                            <h4>No Departments Found</h4>
+                            <p>No departments match your search criteria.</p>
+                            <a href="{% url 'admin_module:department_create' %}" class="btn btn-primary">
+                                <i class="fas fa-plus me-1"></i>Create First Department
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Courses Tab -->
+        <div class="tab-pane fade" id="courses" role="tabpanel">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Courses</h5>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'admin_module:course_management' %}" class="btn btn-outline-primary">
+                                <i class="fas fa-external-link-alt me-1"></i>View All Courses
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Course Management:</strong> Click "View All Courses" to access the full course management interface with search, filter, and pagination features.
+                    </div>
+                    <div class="d-grid">
+                        <a href="{% url 'admin_module:course_management' %}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-graduation-cap me-2"></i>Go to Course Management
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Dashboard -->
+    <div class="text-center mt-4">
+        <a href="{% url 'admin_module:admin_dashboard' %}" class="btn-back-dashboard">
+            <i class="fas fa-arrow-left me-1"></i>Back to Admin Dashboard
+        </a>
+    </div>
+</div>
+
+<!-- Create Department Modal -->
+<div class="modal fade" id="createDepartmentModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" action="{% url 'admin_module:department_create' %}">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title">Create Department</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Department Name *</label>
+            <input type="text" class="form-control" name="name" required>
+            <small class="form-text text-muted">Enter the full name of the department</small>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Department Code *</label>
+            <input type="text" class="form-control" name="code" required>
+            <small class="form-text text-muted">Enter a short code for the department</small>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" name="description" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Department</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Department Modal -->
+<div class="modal fade" id="editDepartmentModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" id="editDepartmentForm">
+        {% csrf_token %}
+        <input type="hidden" name="department_id" id="editDepartmentId">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Department</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Department Name *</label>
+            <input type="text" class="form-control" name="name" id="editDepartmentName" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Department Code *</label>
+            <input type="text" class="form-control" name="code" id="editDepartmentCode" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" name="description" id="editDepartmentDesc" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update Department</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Department Modal -->
+<div class="modal fade" id="deleteDepartmentModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete Department</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete <strong id="deleteDepartmentName"></strong>?</p>
+        <div class="alert alert-warning">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          This action cannot be undone. You will be redirected to a confirmation page where you can choose how to handle associated courses.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <a href="#" id="deleteDepartmentLink" class="btn btn-ebotar-danger">Continue to Confirmation</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Import Department Modal -->
+<div class="modal fade" id="importDepartmentModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" action="{% url 'admin_module:department_import_csv' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title">Import Departments from CSV</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-info">
+            <h6><i class="fas fa-info-circle me-2"></i>CSV Format</h6>
+            <p class="mb-0">Required columns: Department Name, Department Code, Description (optional)</p>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">CSV File *</label>
+            <input type="file" class="form-control" name="csv_file" accept=".csv" required>
+            <small class="form-text text-muted">Maximum file size: 5MB</small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-upload me-1"></i>Import
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+// Edit Department Modal
+var editDepartmentModal = document.getElementById('editDepartmentModal');
+editDepartmentModal && editDepartmentModal.addEventListener('show.bs.modal', function(e) {
+  var btn = e.relatedTarget;
+  var deptId = btn.getAttribute('data-dept-id');
+  document.getElementById('editDepartmentId').value = deptId;
+  document.getElementById('editDepartmentForm').action = '{% url 'admin_module:department_edit' 0 %}'.replace('/0/', '/' + deptId + '/');
+  document.getElementById('editDepartmentName').value = btn.getAttribute('data-name');
+  document.getElementById('editDepartmentCode').value = btn.getAttribute('data-code');
+  document.getElementById('editDepartmentDesc').value = btn.getAttribute('data-description');
+});
+
+// Delete Department Modal
+var deleteDepartmentModal = document.getElementById('deleteDepartmentModal');
+deleteDepartmentModal && deleteDepartmentModal.addEventListener('show.bs.modal', function(e) {
+  var btn = e.relatedTarget;
+  var deptId = btn.getAttribute('data-dept-id');
+  var deptName = btn.getAttribute('data-name');
+  document.getElementById('deleteDepartmentName').innerText = deptName;
+  document.getElementById('deleteDepartmentLink').href = '{% url 'admin_module:department_delete' %}?department_id=' + deptId;
+});
+</script>
+{% endblock %}

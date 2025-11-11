@@ -1,0 +1,21 @@
+/* Copied from candidates.css for module-specific namespacing */
+/* ============================================
+   Candidates Component CSS - Consolidated Styles
+   ============================================ */
+
+/* CSS Variables */
+:root {
+    --primary-color: #0b6e3b;
+    --primary-dark: #075a30;
+    --accent-color: #f4cc5c;
+    --success-color: #10b981;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --border-color: #e2e8f0;
+    --bg-light: #f8fafc;
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+}
+
+/* ... existing code ... */
+

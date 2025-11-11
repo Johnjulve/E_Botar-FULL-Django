@@ -1,0 +1,569 @@
+{%extends 'Static/base.html'%}
+{% load static %}
+
+{% block title %}{{ election.title }} - Results{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #2563eb;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --light-bg: #f8fafc;
+        --card-bg: #ffffff;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --text-muted: #94a3b8;
+        --border-color: #e2e8f0;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+    }
+
+    body {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .page-title {
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--text-primary) 0%, var(--brand-green) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .page-subtitle {
+        text-align: center;
+        font-size: 1.125rem;
+        color: var(--text-secondary);
+        margin-bottom: 3rem;
+        font-weight: 500;
+    }
+
+    .position-results-card {
+        background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+        border-radius: 20px;
+        margin-bottom: 2.5rem;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+        position: relative;
+    }
+
+    .position-results-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, var(--success-color), #10b981);
+    }
+
+    .position-header {
+        padding: 1.5rem 2rem;
+        text-align: center;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .position-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--success-color);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .results-content {
+        padding: 2rem;
+    }
+
+    /* Grid card layout (box type) reused from home/detail */
+    .candidates-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+        padding: 0.5rem 0;
+    }
+
+    .candidate-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.25rem;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-sm);
+        transition: all 0.25s ease;
+    }
+
+    .candidate-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--success-color);
+    }
+
+    .candidate-card.winner {
+        background: linear-gradient(135deg, #d1fae5 0%, #ffffff 100%);
+        border-color: var(--success-color);
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+        position: relative;
+    }
+
+    .candidate-top {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .candidate-placeholder {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 1.1rem;
+    }
+
+    .candidate-meta {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+    }
+
+    .candidate-stats {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        margin-top: 0.5rem;
+    }
+
+    .candidate-stats .count {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--success-color);
+    }
+
+    .candidate-stats .percent {
+        color: var(--text-secondary);
+        font-weight: 600;
+    }
+
+    .candidate-result-item {
+        background: white;
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        border: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .candidate-result-item:hover {
+        transform: translateX(4px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .candidate-result-item.winner {
+        background: linear-gradient(135deg, #d1fae5 0%, #ffffff 100%);
+        border-color: var(--success-color);
+        border-width: 2px;
+        position: relative;
+    }
+
+    .candidate-result-item.winner::before {
+        content: '👑';
+        position: absolute;
+        top: -12px;
+        left: 1rem;
+        font-size: 1.5rem;
+        background: white;
+        padding: 0 0.5rem;
+    }
+
+    .candidate-info {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .rank-badge {
+        background: linear-gradient(135deg, var(--success-color), #10b981);
+        color: white;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.25rem;
+        flex-shrink: 0;
+    }
+
+    .candidate-details {
+        flex: 1;
+    }
+
+    .candidate-name {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+    }
+
+    .candidate-course {
+        font-size: 0.95rem;
+        color: var(--text-secondary);
+    }
+
+    .vote-stats {
+        text-align: right;
+        flex-shrink: 0;
+    }
+
+    .vote-count {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--success-color);
+        margin-bottom: 0.25rem;
+    }
+
+    .winner .vote-count {
+        color: #065f46;
+    }
+
+    .vote-percentage {
+        font-size: 0.95rem;
+        color: var(--text-secondary);
+        font-weight: 600;
+    }
+
+    .chart-container {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: white;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+    }
+
+    .no-results {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: var(--text-muted);
+    }
+
+    .no-results i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: linear-gradient(135deg, var(--light-bg) 0%, #f1f5f9 100%);
+        border-radius: 20px;
+        border: 1px solid var(--border-color);
+    }
+
+    .empty-state h3 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+    }
+
+    .btn-election {
+        background: var(--brand-green, #0b6e3b);
+        color: #fff;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: var(--shadow-md);
+        transition: all 0.3s ease;
+        margin: 0.5rem;
+    }
+
+    .btn-election:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-xl);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-secondary {
+        background: #6b7280;
+    }
+
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 1.75rem;
+        }
+
+        .candidate-result-item {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .vote-stats {
+            text-align: center;
+        }
+
+        .candidate-info {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="page-title">
+        <i class="fas fa-chart-bar"></i> Election Results
+    </h1>
+    <p class="page-subtitle">
+        {{ election.title }}
+        {% if election.is_active_now %}
+            <span style="display: block; color: #f59e0b; font-weight: 700; margin-top: 0.5rem;">
+                <i class="fas fa-poll"></i> Live Results - Election in Progress
+            </span>
+        {% else %}
+            <span style="display: block; color: #10b981; font-weight: 700; margin-top: 0.5rem;">
+                <i class="fas fa-trophy"></i> Final Results
+            </span>
+        {% endif %}
+    </p>
+
+    {% if results %}
+        {% for position, result_data in results.items %}
+        <div class="position-results-card">
+            <div class="position-header">
+                <h2 class="position-title">
+                    <i class="fas fa-crown"></i> {{ position.name }}
+                </h2>
+            </div>
+
+            <div class="results-content">
+                {% if result_data.candidates %}
+                    <div class="candidates-grid">
+                        {% for candidate_data in result_data.candidates %}
+                        <div class="candidate-card {% if forloop.first and candidate_data.vote_count > 0 %}winner{% endif %}">
+                            <div class="candidate-top">
+                                <div>
+                                    <div class="candidate-name">
+                                        {{ candidate_data.candidate.user.get_full_name|default:candidate_data.candidate.user.username }}
+                                        {% if forloop.first and candidate_data.vote_count > 0 %}
+                                            <span style="color:#065f46; margin-left: .35rem;">
+                                                {% if election.is_active_now %}LEADING{% else %}WINNER{% endif %}
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="candidate-meta">
+                                        {% with profile=candidate_data.candidate.user.profile %}
+                                            {% if profile and profile.course %}{{ profile.course.name }}{% endif %}
+                                            {% if profile and profile.year_level %}{% if profile.course %} • {% endif %}{{ profile.year_level }}{% endif %}
+                                        {% endwith %}
+                                        {% if candidate_data.candidate.party %}{% if candidate_data.candidate.user.profile.course or candidate_data.candidate.user.profile.year_level %} • {% endif %}<strong>{{ candidate_data.candidate.party.name }}</strong>{% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="candidate-stats">
+                                <div class="count">{{ candidate_data.vote_count }}</div>
+                                <div class="percent">{{ candidate_data.percentage }}%</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    {% if result_data.total_votes > 0 %}
+                    <div style="text-align: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                        <small style="color: var(--text-secondary); font-weight: 600;">Total Votes Cast: {{ result_data.total_votes }}</small>
+                    </div>
+                    {% endif %}
+
+                    {% if user.is_staff or user.is_superuser %}
+                    <div class="chart-container">
+                        <canvas id="chart-{{ position.id }}" height="250"></canvas>
+                    </div>
+                    {% endif %}
+                {% else %}
+                    <div class="no-results">
+                        <i class="fas fa-users-slash"></i>
+                        <p style="font-weight: 600; color: var(--text-secondary);">No candidates for this position</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-chart-line" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+            <h3>No Results Available Yet</h3>
+            <p style="color: var(--text-secondary); font-size: 1.125rem; margin-bottom: 2rem;">
+                Results will be displayed here once voting begins.
+            </p>
+        </div>
+    {% endif %}
+
+    <!-- Navigation Buttons -->
+    <div style="text-align: center; margin-top: 3rem;">
+        <a href="{% url 'voting_module:view_ballot_entry' election.id %}" class="btn-election">
+            <i class="fas fa-vote-yea"></i> View Ballot
+        </a>
+        <a href="{% url 'election_module:school_election_list' %}" class="btn-election btn-secondary">
+            <i class="fas fa-list"></i> All Elections
+        </a>
+        <a href="{% url 'home' %}" class="btn-election btn-secondary">
+            <i class="fas fa-home"></i> Home
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'vendor/chartjs/chart.umd.min.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    {% if results and user.is_staff or user.is_superuser %}
+        {% for position, result_data in results.items %}
+            {% if result_data.candidates %}
+            (function() {
+                const ctx = document.getElementById('chart-{{ position.id }}');
+                if (!ctx) return;
+
+                const labels = [
+                    {% for cd in result_data.candidates %}'{{ cd.candidate.name|escapejs }}'{% if not forloop.last %},{% endif %}{% endfor %}
+                ];
+                const votes = [
+                    {% for cd in result_data.candidates %}{{ cd.vote_count }}{% if not forloop.last %},{% endif %}{% endfor %}
+                ];
+
+                // Generate gradient colors
+                const backgroundColors = labels.map((_, i) => {
+                    if (i === 0) return 'rgba(16, 185, 129, 0.8)'; // Winner - green
+                    if (i === 1) return 'rgba(59, 130, 246, 0.7)'; // Second - blue
+                    if (i === 2) return 'rgba(245, 158, 11, 0.7)'; // Third - yellow
+                    return 'rgba(107, 114, 128, 0.6)'; // Others - gray
+                });
+
+                const borderColors = labels.map((_, i) => {
+                    if (i === 0) return 'rgba(16, 185, 129, 1)';
+                    if (i === 1) return 'rgba(59, 130, 246, 1)';
+                    if (i === 2) return 'rgba(245, 158, 11, 1)';
+                    return 'rgba(107, 114, 128, 1)';
+                });
+
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Votes',
+                            data: votes,
+                            backgroundColor: backgroundColors,
+                            borderColor: borderColors,
+                            borderWidth: 2,
+                            borderRadius: 8,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                grid: {
+                                    display: false
+                                },
+                                ticks: {
+                                    color: '#334155',
+                                    font: {
+                                        weight: 600
+                                    }
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: '#e2e8f0'
+                                },
+                                ticks: {
+                                    color: '#334155',
+                                    precision: 0,
+                                    font: {
+                                        weight: 600
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                                titleColor: '#fff',
+                                bodyColor: '#fff',
+                                borderColor: '#10b981',
+                                borderWidth: 1,
+                                padding: 12,
+                                displayColors: false,
+                                callbacks: {
+                                    label: function(context) {
+                                        const total = votes.reduce(function(a, b) { return a + b; }, 0);
+                                        var percentage = total > 0 ? ((context.raw / total) * 100).toFixed(1) : 0;
+                                        return String(context.raw) + ' votes (' + percentage + '%)';
+                                    }
+                                }
+                            }
+                        },
+                        animation: {
+                            duration: 1500,
+                            easing: 'easeInOutQuart'
+                        }
+                    }
+                });
+            })();
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    // Add smooth animation on scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, {
+        threshold: 0.1
+    });
+    
+    document.querySelectorAll('.position-results-card').forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(card);
+    });
+});
+</script>
+{% endblock %}

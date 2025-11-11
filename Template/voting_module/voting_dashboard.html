@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voting Dashboard - E-Botar</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --brand-green: #0b6e3b;
+            --brand-yellow: #f4cc5c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+        }
+
+        .voting-dashboard {
+            padding: 2rem 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .dashboard-title {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--brand-green), var(--primary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .dashboard-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+        }
+
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.75rem;
+            color: white;
+        }
+
+        .stat-icon.active {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+        }
+
+        .stat-icon.completed {
+            background: linear-gradient(135deg, var(--primary-color), #1d4ed8);
+        }
+
+        .stat-icon.votes {
+            background: linear-gradient(135deg, var(--warning-color), #d97706);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .elections-section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .elections-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .election-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .election-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .election-card.active::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--success-color), #059669);
+        }
+
+        .election-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .election-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .election-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .election-status {
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .election-status.active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+        }
+
+        .election-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-vote {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .btn-vote.primary {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: white;
+        }
+
+        .btn-vote.primary:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .btn-vote.secondary {
+            background: var(--card-bg);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-vote.secondary:hover {
+            background: var(--border-color);
+            transform: translateY(-2px);
+            color: var(--text-primary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-secondary);
+            opacity: 0.6;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .empty-desc {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .quick-action {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .quick-action:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            color: var(--text-primary);
+        }
+
+        .quick-action-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .quick-action-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .quick-action-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .voting-history {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            margin-top: 3rem;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-election {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 1.05rem;
+        }
+
+        .history-date {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-title {
+                font-size: 2.5rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+            
+            .elections-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .election-actions {
+                flex-direction: column;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="voting-dashboard">
+        <div class="container">
+            <!-- Dashboard Header -->
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">
+                    <i class="fas fa-vote-yea"></i>
+                    Voting Dashboard
+                </h1>
+                <p class="dashboard-subtitle">
+                    {% if user.is_authenticated %}
+                        Welcome back, {{ user.get_full_name|default:user.username }}! 
+                        {% if user_profile and user_profile.is_verified %}
+                            You're ready to participate in elections.
+                        {% else %}
+                            Complete your profile verification to start voting.
+                        {% endif %}
+                    {% else %}
+                        Participate in school elections and make your voice heard.
+                    {% endif %}
+                </p>
+            </div>
+
+            <!-- Statistics Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon active">
+                        <i class="fas fa-vote-yea"></i>
+                    </div>
+                    <div class="stat-number">{{ elections.count }}</div>
+                    <div class="stat-label">Active Elections</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon completed">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-number">{{ user_votes.count }}</div>
+                    <div class="stat-label">Your Votes</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon votes">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-number">
+                        {% if elections %}
+                            {% for election in elections %}
+                                {{ election.total_votes|default:0 }}{% if not forloop.last %}+{% endif %}
+                            {% endfor %}
+                        {% else %}
+                            0
+                        {% endif %}
+                    </div>
+                    <div class="stat-label">Total Votes</div>
+                </div>
+            </div>
+
+            <!-- Active Elections Section -->
+            <div class="elections-section">
+                <h2 class="section-title">
+                    <i class="fas fa-calendar-check"></i>
+                    Active Elections
+                </h2>
+                
+                {% if elections %}
+                    <div class="elections-grid">
+                        {% for election in elections %}
+                            <div class="election-card active">
+                                <h3 class="election-title">{{ election.title }}</h3>
+                                <p class="election-description">{{ election.description|truncatewords:20 }}</p>
+                                
+                                <div class="election-meta">
+                                    <span>
+                                        <i class="fas fa-calendar"></i>
+                                        {{ election.start_date|date:"M j" }} - {{ election.end_date|date:"M j, Y" }}
+                                    </span>
+                                    <span class="election-status active">Active</span>
+                                </div>
+                                
+                                <div class="election-actions">
+                                    {% if user.is_authenticated and user_profile and user_profile.is_verified %}
+                                        <a href="/voting/election/{{ election.id }}/" class="btn-vote primary">
+                                            <i class="fas fa-vote-yea"></i>
+                                            Vote Now
+                                        </a>
+                                    {% elif user.is_authenticated %}
+                                        <a href="/auth/profile/" class="btn-vote primary">
+                                            <i class="fas fa-user-check"></i>
+                                            Verify Profile
+                                        </a>
+                                    {% else %}
+                                        <a href="/auth/login/" class="btn-vote primary">
+                                            <i class="fas fa-sign-in-alt"></i>
+                                            Login to Vote
+                                        </a>
+                                    {% endif %}
+                                    
+                                    <a href="/elections/{{ election.id }}/" class="btn-vote secondary">
+                                        <i class="fas fa-info-circle"></i>
+                                        Details
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-calendar-times"></i>
+                        </div>
+                        <h3 class="empty-title">No Active Elections</h3>
+                        <p class="empty-desc">There are currently no active elections. Check back later for upcoming voting opportunities.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <a href="/elections/" class="quick-action">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <div class="quick-action-title">All Elections</div>
+                    <div class="quick-action-desc">View all elections</div>
+                </a>
+                
+                {% if user.is_authenticated %}
+                    <a href="/voting/history/" class="quick-action">
+                        <div class="quick-action-icon">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <div class="quick-action-title">Voting History</div>
+                        <div class="quick-action-desc">View your past votes</div>
+                    </a>
+                    
+                    <a href="/auth/profile/" class="quick-action">
+                        <div class="quick-action-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="quick-action-title">My Profile</div>
+                        <div class="quick-action-desc">Manage your account</div>
+                    </a>
+                {% else %}
+                    <a href="/auth/login/" class="quick-action">
+                        <div class="quick-action-icon">
+                            <i class="fas fa-sign-in-alt"></i>
+                        </div>
+                        <div class="quick-action-title">Login</div>
+                        <div class="quick-action-desc">Access your account</div>
+                    </a>
+                    
+                    <a href="/auth/register/" class="quick-action">
+                        <div class="quick-action-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="quick-action-title">Register</div>
+                        <div class="quick-action-desc">Create new account</div>
+                    </a>
+                {% endif %}
+            </div>
+
+            <!-- Recent Voting History (for authenticated users) -->
+            {% if user.is_authenticated and user_votes %}
+                <div class="voting-history">
+                    <h2 class="section-title">
+                        <i class="fas fa-history"></i>
+                        Recent Voting Activity
+                    </h2>
+                    
+                    {% for vote in user_votes|slice:":5" %}
+                        <div class="history-item">
+                            <div>
+                                <div class="history-election">{{ vote.election.title }}</div>
+                                <div class="history-date">
+                                    Voted for {{ vote.candidate.name }} as {{ vote.position.title }}
+                                </div>
+                            </div>
+                            <div class="history-date">
+                                {{ vote.created_at|date:"M j, Y" }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                    
+                    {% if user_votes.count > 5 %}
+                        <div style="text-align: center; margin-top: 1.5rem;">
+                            <a href="/voting/history/" class="btn-vote secondary">
+                                View All History
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add smooth animations
+            const cards = document.querySelectorAll('.stat-card, .election-card, .quick-action');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+            
+            // Add hover effects for interactive elements
+            const voteButtons = document.querySelectorAll('.btn-vote');
+            voteButtons.forEach(button => {
+                button.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-3px)';
+                });
+                
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

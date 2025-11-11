@@ -1,0 +1,322 @@
+{%extends 'Static/base.html'%}
+{% load static %}
+
+{% block title %}Review Applications - E-Botar{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin_module.css' %}?v=20251016">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Title -->
+    <div class="page-title-section">
+        <h1 class="page-title">
+            <i class="fas fa-clipboard-check me-2"></i>
+            Review Applications
+        </h1>
+        <p class="page-subtitle">Review and approve candidate applications for school elections</p>
+    </div>
+
+    <!-- Statistics -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-number">{{ page_obj.paginator.count }}</div>
+            <div class="stat-label">Pending Applications</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-crown"></i>
+            </div>
+            <div class="stat-number">
+                {% with president_count=0 %}
+                    {% for app in page_obj %}
+                        {% if "President" in app.position.name %}
+                            {{ forloop.counter }}
+                        {% endif %}
+                    {% endfor %}
+                    {% if not president_count %}0{% endif %}
+                {% endwith %}
+            </div>
+            <div class="stat-label">President Applications</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <div class="stat-number">
+                {% with vp_count=0 %}
+                    {% for app in page_obj %}
+                        {% if app.position.position_type == "vice_president" %}
+                            {{ forloop.counter }}
+                        {% endif %}
+                    {% endfor %}
+                    {% if not vp_count %}0{% endif %}
+                {% endwith %}
+            </div>
+            <div class="stat-label">Vice President Applications</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-calendar-day"></i>
+            </div>
+            <div class="stat-number">
+                {% with today_count=0 %}
+                    {% for app in page_obj %}
+                        {% if app.submitted_at|date:"Y-m-d" == "now"|date:"Y-m-d" %}
+                            {{ forloop.counter }}
+                        {% endif %}
+                    {% endfor %}
+                    {% if not today_count %}0{% endif %}
+                {% endwith %}
+            </div>
+            <div class="stat-label">Today's Applications</div>
+        </div>
+    </div>
+
+    <!-- Review Rules -->
+    <div class="alert alert-info mb-4">
+        <h6><i class="fas fa-info-circle me-2"></i>Review Guidelines</h6>
+        <ul class="mb-0">
+            <li><strong>Party Rule:</strong> Each party can only have one candidate per position per election</li>
+            <li><strong>Consecutive Term Rule:</strong> Candidates cannot run for the same position in consecutive elections</li>
+            <li>These rules are automatically enforced during approval - violations will be blocked</li>
+        </ul>
+    </div>
+
+    <!-- Applications List -->
+    {% if page_obj %}
+        {% for application in page_obj %}
+        <div class="application-card">
+            <div class="application-header">
+                <div class="d-flex align-items-center">
+                    {% if application.photo %}
+                        <img src="{{ application.photo.url }}" alt="{{ application.user.get_full_name }}" class="applicant-photo">
+                    {% else %}
+                        <div class="applicant-photo bg-light d-flex align-items-center justify-content-center">
+                            <i class="fas fa-user fa-2x text-muted"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="applicant-info">
+                        <div class="applicant-name">
+                            {{ application.user.get_full_name|default:application.user.username }}
+                        </div>
+                        <div class="position-title">
+                            <i class="fas fa-crown me-1"></i>
+                            {{ application.position.name }}
+                        </div>
+                        <div class="application-meta">
+                            <i class="fas fa-calendar me-1"></i>
+                            {{ application.election.title }}<br>
+                            <i class="fas fa-clock me-1"></i>
+                            Applied on {{ application.submitted_at|date:"F d, Y \a\t g:i A" }}<br>
+                            <i class="fas fa-envelope me-1"></i>
+                            {{ application.user.email }}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-end">
+                    <span class="status-badge status-{{ application.status }}">
+                        <i class="fas fa-clock me-1"></i>
+                        {{ application.get_status_display }}
+                    </span>
+                </div>
+            </div>
+            
+            {% if application.party_name %}
+            <div class="mb-3">
+                <strong><i class="fas fa-flag me-1"></i>Party:</strong> {{ application.party_name }}
+                {% if application.party_logo %}
+                    <img src="{{ application.party_logo.url }}" alt="{{ application.party_name }}" style="width: 40px; height: 40px; border-radius: 50%; margin-left: 10px;">
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            {% if application.manifesto %}
+            <div class="manifesto-section">
+                <h6 class="text-primary mb-2">
+                    <i class="fas fa-file-text me-1"></i>
+                    Campaign Manifesto
+                </h6>
+                <p class="manifesto-text">{{ application.manifesto|truncatewords:100 }}</p>
+            </div>
+            {% endif %}
+            
+            <div class="action-buttons">
+                <form method="post" action="{% url 'admin_module:approve_application' application.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-ebotar btn-approve" onclick="return confirm('Are you sure you want to approve this application?')">
+                        <i class="fas fa-check me-1"></i>
+                        Approve Application
+                    </button>
+                </form>
+                
+                <button type="button" class="btn-ebotar btn-reject" data-bs-toggle="modal" data-bs-target="#rejectModal{{ application.id }}">
+                    <i class="fas fa-times me-1"></i>
+                    Reject Application
+                </button>
+                
+                <button type="button" class="btn-ebotar btn-view" data-bs-toggle="modal" data-bs-target="#profileModal{{ application.id }}">
+                    <i class="fas fa-user me-1"></i>
+                    View Candidate Profile
+                </button>
+            </div>
+        </div>
+
+        <!-- Reject Modal -->
+        <div class="modal fade" id="rejectModal{{ application.id }}" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="fas fa-times-circle me-2"></i>
+                            Reject Application
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form method="post" action="{% url 'admin_module:reject_application' application.id %}">
+                        {% csrf_token %}
+                        <div class="modal-body">
+                            <p>Are you sure you want to reject <strong>{{ application.user.get_full_name|default:application.user.username }}</strong>'s application for <strong>{{ application.position.name }}</strong>?</p>
+                            
+                            <div class="mb-3">
+                                <label for="review_notes_{{ application.id }}" class="form-label">Rejection Reason (Optional)</label>
+                                <textarea class="form-control" id="review_notes_{{ application.id }}" name="review_notes" rows="3" placeholder="Please provide a reason for rejection..."></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-times me-1"></i>
+                                Reject Application
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Profile Modal -->
+        <div class="modal fade profile-modal" id="profileModal{{ application.id }}" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="fas fa-user me-2"></i>
+                            Candidate Profile - {{ application.user.get_full_name|default:application.user.username }}
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-4 text-center">
+                                {% if application.photo %}
+                                    <img src="{{ application.photo.url }}" alt="Candidate Photo" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                                {% else %}
+                                    <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mb-3 mx-auto" style="width: 150px; height: 150px;">
+                                        <i class="fas fa-user fa-4x text-muted"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-8">
+                                <h4>{{ application.user.get_full_name|default:application.user.username }}</h4>
+                                <p class="text-muted">{{ application.user.email }}</p>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-sm-4"><strong>Position:</strong></div>
+                                    <div class="col-sm-8">{{ application.position.name }}</div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-sm-4"><strong>Election:</strong></div>
+                                    <div class="col-sm-8">{{ application.election.title }}</div>
+                                </div>
+                                
+                                {% if application.party %}
+                                <div class="row mb-3">
+                                    <div class="col-sm-4"><strong>Party:</strong></div>
+                                    <div class="col-sm-8">
+                                        {{ application.party.name }}
+                                        {% if application.party.logo %}
+                                            <img src="{{ application.party.logo.url }}" alt="{{ application.party.name }}" class="ms-2" style="width: 30px; height: 30px; object-fit: contain;">
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                <div class="row mb-3">
+                                    <div class="col-sm-4"><strong>Applied On:</strong></div>
+                                    <div class="col-sm-8">{{ application.submitted_at|date:"F d, Y \a\t g:i A" }}</div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-sm-4"><strong>Status:</strong></div>
+                                    <div class="col-sm-8">
+                                        <span class="badge status-{{ application.status }}">
+                                            {{ application.get_status_display }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% if application.manifesto %}
+                        <hr>
+                        <h5><i class="fas fa-file-text me-2"></i>Campaign Manifesto</h5>
+                        <div class="manifesto-content">
+                            <p>{{ application.manifesto|linebreaks }}</p>
+                        </div>
+                        {% endif %}
+                        
+                        {% if application.review_notes %}
+                        <hr>
+                        <h5><i class="fas fa-sticky-note me-2"></i>Review Notes</h5>
+                        <div class="review-notes">
+                            <p>{{ application.review_notes|linebreaks }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+            <i class="fas fa-clipboard-check"></i>
+            <h3>No Pending Applications</h3>
+            <p class="lead">All applications have been reviewed or no applications have been submitted yet.</p>
+            <a href="{% url 'voting_module:administration_dashboard' %}" class="btn btn-back-dashboard btn-lg">
+                Back to Dashboard
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+// Auto-refresh every 30 seconds to show new applications
+setInterval(function() {
+    // Only refresh if there are pending applications
+    if (document.querySelector('.application-card')) {
+        location.reload();
+    }
+}, 30000);
+
+// Add confirmation for approve action
+document.querySelectorAll('.btn-approve').forEach(button => {
+    button.addEventListener('click', function(e) {
+        if (!confirm('Are you sure you want to approve this application? This will create a candidate record.')) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
+{% endblock %}

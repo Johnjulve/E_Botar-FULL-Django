@@ -1,0 +1,257 @@
+{% extends 'Static/base.html' %}
+{% load static %}
+
+{% block title %}My Voting History{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #2563eb;
+        --success-color: #10b981;
+        --card-bg: #ffffff;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --border-color: #e2e8f0;
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    }
+
+    body {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    }
+
+    .history-container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .page-title {
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+        text-align: center;
+        font-size: 1.125rem;
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+    }
+
+    .history-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 2px solid var(--border-color);
+        box-shadow: var(--shadow-md);
+        transition: all 0.3s ease;
+    }
+
+    .history-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--success-color);
+    }
+
+    .election-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .election-details {
+        flex: 1;
+    }
+
+    .election-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .voted-date {
+        font-size: 0.95rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+    }
+
+    .receipt-info {
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        border: 1px solid var(--primary-color);
+    }
+
+    .receipt-label {
+        font-size: 0.75rem;
+        color: #1e40af;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .receipt-code {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1e3a8a;
+        font-family: 'Courier New', monospace;
+        letter-spacing: 2px;
+    }
+
+    .action-links {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-link {
+        padding: 0.5rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        font-size: 0.875rem;
+    }
+
+    .btn-primary {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #1d4ed8;
+    }
+
+    .btn-success {
+        background: var(--success-color);
+        color: white;
+    }
+
+    .btn-success:hover {
+        background: #059669;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        background: white;
+        border-radius: 16px;
+        box-shadow: var(--shadow-md);
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        color: var(--text-secondary);
+        margin-bottom: 1rem;
+    }
+
+    .empty-text {
+        font-size: 1.25rem;
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+    }
+
+    .btn {
+        padding: 0.75rem 2rem;
+        border-radius: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        background: var(--success-color);
+        color: white;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 1.75rem;
+        }
+
+        .election-info {
+            flex-direction: column;
+        }
+
+        .action-links {
+            flex-direction: column;
+        }
+
+        .btn-link {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="history-container">
+    <h1 class="page-title">
+        <i class="fas fa-history"></i> My Voting History
+    </h1>
+    <p class="page-subtitle">View all elections you've participated in</p>
+
+    {% if history %}
+        {% for item in history %}
+        <div class="history-card">
+            <div class="election-info">
+                <div class="election-details">
+                    <div class="election-title">
+                        <i class="fas fa-vote-yea"></i> {{ item.election.title }}
+                    </div>
+                    <div class="voted-date">
+                        <i class="fas fa-calendar-check"></i> Voted on {{ item.voted_at|date:"F j, Y" }} at {{ item.voted_at|time:"g:i A" }}
+                    </div>
+                </div>
+                
+                {% if item.receipt_code %}
+                <div class="receipt-info">
+                    <div class="receipt-label">Receipt</div>
+                    <div class="receipt-code">{{ item.receipt_code }}</div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="action-links">
+                <a href="{% url 'voting_module:my_ballot' item.election.id %}" class="btn-link btn-primary">
+                    <i class="fas fa-eye"></i> View My Ballot
+                </a>
+                <a href="{% url 'voting_module:school_election_results' item.election.id %}" class="btn-link btn-success">
+                    <i class="fas fa-chart-bar"></i> View Results
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-ballot"></i>
+            </div>
+            <div class="empty-text">
+                You haven't voted in any elections yet
+            </div>
+            <a href="{% url 'voting_module:school_election_list' %}" class="btn">
+                <i class="fas fa-list"></i> Browse Elections
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+

@@ -1,0 +1,596 @@
+/* ========== E-Botar Button System: Bootstrap Legacy Compatibility ========== */
+
+/* Brand Green (Primary) -- Based on .btn-primary-action, .btn-primary */
+.btn-ebotar { /* legacy version */
+  background: var(--brand-green, #0b6e3b);
+  color: #fff;
+  border: 1px solid var(--brand-green-dark, #075a30);
+  border-radius: 12px;
+  font-weight: 700;
+  padding: .9rem 1.25rem;
+  box-shadow: 0 6px 18px rgba(11,110,59,.15);
+  transition: all 0.3s ease;
+}
+.btn-ebotar:hover, .btn-ebotar:focus {
+  background: var(--brand-green-dark, #075a30);
+  color: #fff;
+  border-color: var(--brand-green-dark, #075a30);
+  box-shadow: 0 8px 22px rgba(11,110,59,.2);
+}
+.btn-ebotar:active, .btn-ebotar.active, .btn-ebotar.show {
+  background: var(--brand-green, #0b6e3b) !important;
+  color: #fff !important;
+  border-color: var(--brand-green-dark, #075a30) !important;
+  box-shadow: 0 6px 18px rgba(11,110,59,.15) !important;
+}
+.btn-ebotar:focus-visible {
+  background: var(--brand-green, #0b6e3b);
+  color: #fff;
+  border-color: var(--brand-green-dark, #075a30);
+  outline: 2px solid rgba(11,110,59,.4);
+  outline-offset: 2px;
+}
+
+/* Blue (Primary gradient) */
+.btn-ebotar-info { /* legacy version */
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: #fff;
+  box-shadow: var(--shadow-md);
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+}
+.btn-ebotar-info:hover, .btn-ebotar-info:focus {
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+  color: #fff;
+  box-shadow: var(--shadow-lg);
+}
+
+/* Success (Green gradient) */
+.btn-ebotar-success { /* legacy version */
+  background: linear-gradient(135deg, var(--success-color), #059669);
+  color: #fff;
+  box-shadow: var(--shadow-md);
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+}
+.btn-ebotar-success:hover { background: linear-gradient(135deg, #059669, var(--success-color)); color: #fff; box-shadow: var(--shadow-lg); }
+
+/* Warning (Yellow/Orange grad) */
+.btn-ebotar-warning { /* legacy version */
+  background: linear-gradient(135deg, var(--warning-color), #d97706);
+  color: #fff;
+  box-shadow: var(--shadow-md);
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+}
+.btn-ebotar-warning:hover { background: linear-gradient(135deg, #d97706, var(--warning-color)); color: #fff; box-shadow: var(--shadow-lg); }
+
+/* Danger (Red grad) */
+.btn-ebotar-danger { /* legacy version */
+  background: linear-gradient(135deg, var(--danger-color), #dc2626);
+  color: #fff;
+  box-shadow: var(--shadow-md);
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+}
+.btn-ebotar-danger:hover { background: linear-gradient(135deg, #dc2626, var(--danger-color)); color: #fff; box-shadow: var(--shadow-lg); }
+
+/* Secondary (grey) */
+.btn-ebotar-secondary { /* legacy version */
+  background: linear-gradient(135deg, var(--secondary-color), #475569);
+  color: #fff;
+  box-shadow: var(--shadow-md);
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+}
+.btn-ebotar-secondary:hover { background: linear-gradient(135deg, #475569, var(--secondary-color)); color: #fff; box-shadow: var(--shadow-lg); }
+
+/* Accent (Yellow) */
+.btn-ebotar-accent { /* legacy version */
+  background: var(--brand-yellow, #f4cc5c);
+  color: #0b6e3b;
+  border-radius: 12px;
+  font-weight: 700;
+  padding: .9rem 1.25rem;
+  border: 1px solid var(--brand-yellow-dark, #e6b93e);
+  box-shadow: 0 6px 18px rgba(244,204,92,.09);
+}
+.btn-ebotar-accent:hover, .btn-ebotar-accent:focus {
+  background: #ffe8a1;
+  color: #0b6e3b;
+  border-color: var(--brand-yellow-dark, #e6b93e);
+}
+
+/* Election Theme Button (originally .btn-election) */
+.btn-ebotar-election { /* legacy btn-election version */
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 0.6rem 1.25rem;
+  margin: 0.25rem;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+.btn-ebotar-election:hover { background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%); color: white; box-shadow: var(--shadow-md); }
+
+.btn-ebotar-election.btn-ebotar-secondary { background: linear-gradient(135deg, var(--secondary-color) 0%, #475569 100%); }
+.btn-ebotar-election.btn-ebotar-secondary:hover { background: linear-gradient(135deg, #475569 0%, #334155 100%); color: white; }
+
+/* Outlines (Primary & Secondary) */
+.btn-ebotar-outline-primary { /* legacy version */
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+  background: transparent;
+}
+.btn-ebotar-outline-primary:hover { background: var(--primary-color); color: white; }
+
+.btn-ebotar-outline-secondary { /* legacy version */
+  border: 2px solid var(--secondary-color);
+  color: var(--secondary-color);
+  background: transparent;
+}
+.btn-ebotar-outline-secondary:hover { background: var(--secondary-color); color: white; }
+
+/* Pill (for voting) */
+.btn-ebotar-vote { /* legacy btn-vote version */
+  background: linear-gradient(135deg, var(--success-color), #059669);
+  color: white;
+  font-size: 1.1rem;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: var(--shadow-lg);
+  transition: all 0.3s ease;
+}
+.btn-ebotar-vote:hover { transform: translateY(-3px); box-shadow: var(--shadow-xl); color: white; }
+
+/* Light/White */
+.btn-ebotar-light { background-color: #fff; color: #0b6e3b; border: 2px solid #e2e8f0; border-radius: 12px; font-weight: 700; }
+.btn-ebotar-light:hover, .btn-ebotar-light:focus { background-color: #f8fafc; color: #0b6e3b; }
+
+/* Size variants */
+.btn-ebotar.btn-sm {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  border-radius: 8px;
+}
+
+.btn-ebotar.btn-lg {
+  padding: 1rem 1.5rem;
+  font-size: 1.125rem;
+  border-radius: 14px;
+}
+
+/* Disable state and sizing as before */
+.btn-ebotar:disabled, .btn-ebotar[disabled],
+.btn-ebotar-success:disabled, .btn-ebotar-success[disabled],
+.btn-ebotar-warning:disabled, .btn-ebotar-warning[disabled],
+.btn-ebotar-danger:disabled, .btn-ebotar-danger[disabled],
+.btn-ebotar-info:disabled, .btn-ebotar-info[disabled],
+.btn-ebotar-secondary:disabled, .btn-ebotar-secondary[disabled],
+.btn-ebotar-accent:disabled, .btn-ebotar-accent[disabled],
+.btn-ebotar-vote:disabled, .btn-ebotar-vote[disabled],
+.btn-ebotar-election:disabled, .btn-ebotar-election[disabled],
+.btn-ebotar-outline-primary:disabled, .btn-ebotar-outline-primary[disabled],
+.btn-ebotar-outline-secondary:disabled, .btn-ebotar-outline-secondary[disabled],
+.btn-ebotar-light:disabled, .btn-ebotar-light[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Uniform width for action table buttons as before (preserve admin table alignment) */
+.table .btn-ebotar,
+.table .btn-ebotar-accent,
+.table .btn-ebotar-danger,
+.table .btn-ebotar-info,
+.table .btn-ebotar-success,
+.table .btn-ebotar-warning,
+.table .btn-ebotar-secondary,
+.table .btn-ebotar-vote,
+.table .btn-ebotar-light,
+.table .btn-ebotar-election,
+.table .btn-ebotar-outline-primary,
+.table .btn-ebotar-outline-secondary,
+.table .btn:not(.btn-action-dropdown),
+.table button:not(.btn-action-dropdown),
+.table a.btn:not(.btn-action-dropdown) {
+  min-width: 95px;
+  max-width: 130px;
+  width: 105px;
+  text-align: center;
+  justify-content: center !important;
+  white-space: nowrap;
+  margin: 0;
+  display: inline-flex;
+}
+
+.btn-group-row, .action-btn-group {
+  display: inline-flex;
+  gap: 0.5rem;
+}
+
+/* E-Botar modern actions dropdown menu for admin row actions */
+.ebotar-dropdown {
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 16px rgba(11,110,59,0.10);
+  min-width: 180px;
+  border: 1.5px solid #e2e8f0;
+  padding: 0.5rem !important;
+  margin: 0 !important;
+}
+
+/* Reset list items completely */
+.ebotar-dropdown li {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+}
+
+/* Universal dropdown item reset - apply to ALL elements */
+.ebotar-dropdown .dropdown-item,
+.ebotar-dropdown li > a.dropdown-item,
+.ebotar-dropdown li > button.dropdown-item,
+.ebotar-dropdown li > form,
+.ebotar-dropdown li > form > button.dropdown-item {
+  /* Sizing */
+  width: 100% !important;
+  padding: 0.75rem 1rem !important;
+  margin: 0.15rem 0 !important;
+  box-sizing: border-box !important;
+  
+  /* Typography */
+  font-size: 0.95rem !important;
+  font-weight: 500 !important;
+  line-height: 1.5 !important;
+  text-align: center !important;
+  text-decoration: none !important;
+  
+  /* Display */
+  display: block !important;
+  
+  /* Visual */
+  border: none !important;
+  border-radius: 0.5rem !important;
+  background: transparent !important;
+  color: #1e293b !important;
+  
+  /* Animation */
+  transition: all 0.15s ease !important;
+}
+
+/* Form specific reset */
+.ebotar-dropdown form {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  display: block !important;
+}
+
+/* Extra specificity for buttons inside forms */
+.ebotar-dropdown li form button.dropdown-item {
+  margin: 0.15rem 0 !important;
+  padding: 0.75rem 1rem !important;
+  width: 100% !important;
+  text-align: center !important;
+}
+
+/* Ensure hidden inputs don't affect layout */
+.ebotar-dropdown form input[type="hidden"] {
+  display: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  position: absolute !important;
+  left: -9999px !important;
+}
+
+/* Perfect centering for text content */
+.ebotar-dropdown .dropdown-item {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Hover and Active States */
+.ebotar-dropdown .dropdown-item:hover,
+.ebotar-dropdown .dropdown-item:focus,
+.ebotar-dropdown .dropdown-item:active,
+.ebotar-dropdown li > a.dropdown-item:hover,
+.ebotar-dropdown li > button.dropdown-item:hover {
+  background: #f0fbf6 !important;
+  color: #0b6e3b !important;
+}
+
+/* Danger button styling */
+.ebotar-dropdown .dropdown-item.text-danger {
+  color: #dc3545 !important;
+}
+
+.ebotar-dropdown .dropdown-item.text-danger:hover,
+.ebotar-dropdown .dropdown-item.text-danger:focus,
+.ebotar-dropdown .dropdown-item.text-danger:active {
+  background: #ffeded !important;
+  color: #dc3545 !important;
+}
+
+/* Divider */
+.ebotar-dropdown .dropdown-divider {
+  margin: 0.5rem 0 !important;
+  border-color: #e2e8f0 !important;
+}
+
+/* ============================================
+   Enhanced User Actions Dropdown - Modern Design
+   ============================================ */
+
+/* Action Button - Compact Icon Button */
+.btn-action-dropdown {
+  background: transparent !important;
+  border: 1px solid var(--brand-green, #0b6e3b) !important;
+  color: var(--brand-green, #0b6e3b) !important;
+  border-radius: 8px !important;
+  padding: 0.5rem 0.9rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  line-height: 1.25 !important;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease !important;
+  box-shadow: none !important;
+}
+
+.btn-action-dropdown::after {
+  display: none !important;
+}
+
+.btn-action-dropdown:hover,
+.btn-action-dropdown:focus,
+.btn-action-dropdown:active,
+.btn-action-dropdown.show {
+  background: #f8fafc !important;
+  border-color: var(--brand-green, #0b6e3b) !important;
+  color: var(--brand-green, #0b6e3b) !important;
+}
+
+/* Restore Bootstrap caret for dropdown toggle (we previously hid it for icon-only button) */
+.btn-action-dropdown.dropdown-toggle::after {
+  display: inline-block !important;
+}
+
+.btn-action-dropdown:focus-visible {
+  outline: 2px solid rgba(11, 110, 59, 0.4) !important;
+  outline-offset: 2px !important;
+}
+
+/* User Actions Dropdown Menu */
+.user-actions-dropdown {
+  border-radius: 10px !important;
+  box-shadow: var(--shadow-md) !important;
+  min-width: 180px !important;
+  max-width: 220px !important;
+  border: 1px solid #e2e8f0 !important;
+  padding: 0.25rem !important;
+  margin-top: 0.5rem !important;
+  background: #ffffff !important;
+  overflow: visible !important;
+  position: absolute !important;
+  z-index: 1050 !important;
+}
+
+/* Ensure dropdown doesn't get clipped by table */
+.table td .dropdown {
+  position: static !important;
+}
+
+.table td .user-actions-dropdown {
+  position: absolute !important;
+  z-index: 1050 !important;
+}
+
+@keyframes dropdownSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Reset list items */
+.user-actions-dropdown li {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+  overflow: visible !important;
+  position: relative !important;
+}
+
+/* Action Item Styles */
+.user-actions-dropdown .action-item {
+  width: 100% !important;
+  padding: 0.75rem 1rem !important;
+  margin: 0.15rem 0 !important;
+  box-sizing: border-box !important;
+  
+  /* Typography */
+  font-size: 0.9rem !important;
+  font-weight: 500 !important;
+  line-height: 1.5 !important;
+  text-align: left !important;
+  text-decoration: none !important;
+  
+  /* Display */
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  
+  /* Visual */
+  border: none !important;
+  border-radius: 8px !important;
+  background: transparent !important;
+  color: #1e293b !important;
+  
+  /* Animation */
+  transition: all 0.15s ease !important;
+  cursor: pointer !important;
+  overflow: hidden !important;
+  position: relative !important;
+  white-space: nowrap !important;
+}
+
+.user-actions-dropdown .action-item span {
+  flex: 1 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+/* Action Icons - FontAwesome icons have action-icon class directly */
+.user-actions-dropdown .action-icon {
+  display: inline-block !important;
+  width: auto !important;
+  min-width: 18px !important;
+  text-align: center !important;
+  font-size: 0.875rem !important;
+  transition: all 0.15s ease !important;
+  flex-shrink: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+  vertical-align: middle !important;
+}
+
+/* Ensure FontAwesome icons render properly */
+.user-actions-dropdown .action-icon.fa {
+  font-family: "Font Awesome 5 Free", "Font Awesome 5 Pro", "FontAwesome" !important;
+  font-weight: 900 !important;
+  font-style: normal !important;
+}
+
+.user-actions-dropdown .edit-icon {
+  color: #2563eb !important;
+}
+
+.user-actions-dropdown .reset-icon {
+  color: #f59e0b !important;
+}
+
+.user-actions-dropdown .delete-icon {
+  color: #ef4444 !important;
+}
+
+/* Ensure icons are visible and properly colored */
+.user-actions-dropdown .action-icon.fa {
+  color: inherit !important;
+  font-size: 0.875rem !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Hover States */
+.user-actions-dropdown .action-item:hover,
+.user-actions-dropdown .action-item:focus {
+  background: #f0fbf6 !important; /* subtle green tint */
+  color: var(--brand-green, #0b6e3b) !important;
+}
+
+.user-actions-dropdown .action-item:hover .edit-icon,
+.user-actions-dropdown .action-item:focus .edit-icon {
+  color: #2563eb !important;
+}
+
+.user-actions-dropdown .action-item:hover .reset-icon,
+.user-actions-dropdown .action-item:focus .reset-icon {
+  color: #f59e0b !important;
+}
+
+.user-actions-dropdown .action-item:hover .delete-icon,
+.user-actions-dropdown .action-item:focus .delete-icon {
+  color: #ef4444 !important;
+}
+
+/* Specific hover backgrounds for each action type - already defined above */
+
+.user-actions-dropdown .action-item.text-danger:hover,
+.user-actions-dropdown .action-item.text-danger:focus {
+  background: #f8fafc !important;
+  color: #1e293b !important;
+}
+
+.user-actions-dropdown .action-item.text-danger:hover .delete-icon {
+  color: #dc3545 !important;
+}
+
+/* Active State */
+.user-actions-dropdown .action-item:active {
+  background: #e2e8f0 !important;
+  transform: scale(0.98) !important;
+}
+
+/* Form Reset */
+.user-actions-dropdown form {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  display: block !important;
+  overflow: visible !important;
+  position: relative !important;
+}
+
+.user-actions-dropdown form button.action-item {
+  width: 100% !important;
+  margin: 0.15rem 0 !important;
+  padding: 0.75rem 1rem !important;
+  text-align: left !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+}
+
+/* Hidden inputs */
+.user-actions-dropdown form input[type="hidden"] {
+  display: none !important;
+}
+
+/* Divider */
+.user-actions-dropdown .dropdown-divider {
+  margin: 0.5rem 0 !important;
+  border-color: #e2e8f0 !important;
+  border-top-width: 1px !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .btn-action-dropdown {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    max-width: 40px !important;
+  }
+  
+  .user-actions-dropdown {
+    min-width: 180px !important;
+  }
+  
+  .user-actions-dropdown .action-item {
+    padding: 0.875rem 1rem !important;
+    font-size: 0.95rem !important;
+  }
+}

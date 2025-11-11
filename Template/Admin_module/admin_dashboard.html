@@ -1,0 +1,341 @@
+{%extends 'Static/base.html'%}
+{% load static %}
+
+{% block title %}Admin Users{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin_module.css' %}?v=20251016">
+<style>
+/* Force modal to be hidden initially */
+#pwModal {
+    display: none !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+    z-index: 9999 !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+#pwModal.show {
+    display: flex !important;
+}
+
+#pwModal .modal-card {
+    background: white !important;
+    border-radius: 16px !important;
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1) !important;
+    max-width: 500px !important;
+    width: 90% !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Desktop header (unchanged layout) -->
+    <div class="d-none d-lg-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Users</h2>
+        <div class="d-flex align-items-center gap-1">
+            <a class="btn btn-ebotar" href="{% url 'admin_module:export_users' %}"><i class="fa fa-file-export me-1"></i>Export</a>
+            <a class="btn btn-ebotar" href="{% url 'admin_module:bulk_user_import' %}"><i class="fa fa-upload me-1"></i>Bulk Upload</a>
+            <a class="btn btn-ebotar" href="{% url 'admin_module:bulk_user_generation' %}"><i class="fa fa-users me-1"></i>Bulk Generate</a>
+            <div class="dropdown">
+                <button class="btn btn-ebotar-info dropdown-toggle" type="button" id="adminQuickMenuDesktop" data-bs-toggle="dropdown" aria-expanded="false">
+                    More Actions
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminQuickMenuDesktop">
+                    <li><a class="dropdown-item" href="{% url 'admin_module:elections_list' %}">Elections</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'admin_module:candidates_list' %}">Candidates</a></li>
+                    <li><a class="dropdown-item" href="{% url 'admin_module:candidate_create' %}">Add Candidate</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'admin_module:positions_list' %}">Positions</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'admin_module:department_management' %}">Dept & Course</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- Mobile/Tablet header (actions simplified) -->
+    <div class="d-lg-none d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+        <h2 class="mb-0">Users</h2>
+        <!-- Primary actions: Export + Bulk Upload + Bulk Generate -->
+        <div class="w-100">
+            <div class="row g-2">
+                <div class="col-4">
+                    <a class="btn btn-ebotar" href="{% url 'admin_module:export_users' %}"><i class="fa fa-file-export me-1"></i>Export</a>
+                </div>
+                <div class="col-4">
+                    <a class="btn btn-ebotar-secondary" href="{% url 'admin_module:bulk_user_import' %}"><i class="fa fa-upload me-1"></i>Upload</a>
+                </div>
+                <div class="col-4">
+                    <a class="btn btn-ebotar" href="{% url 'admin_module:bulk_user_generation' %}"><i class="fa fa-users me-1"></i>Generate</a>
+                </div>
+            </div>
+        </div>
+        <!-- Secondary actions in dropdown -->
+        <div class="w-100 more-actions">
+            <div class="dropdown w-100">
+                <button class="btn btn-ebotar-outline-primary w-100 dropdown-toggle" type="button" id="adminQuickMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                    More Actions
+                </button>
+                <ul class="dropdown-menu w-100" aria-labelledby="adminQuickMenu">
+                    <li><a class="dropdown-item" href="{% url 'admin_module:elections_list' %}">Elections</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'admin_module:candidates_list' %}">Candidates</a></li>
+                    <li><a class="dropdown-item" href="{% url 'admin_module:candidate_create' %}">Add Candidate</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'admin_module:positions_list' %}">Positions</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'admin_module:department_management' %}">Dept & Course</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="sticky-filters">
+    <form method="get" class="row g-2 align-items-end mb-0">
+        <div class="col-md-4">
+            <label class="form-label">Search</label>
+            <input type="text" name="search" value="{{ search_query }}" class="form-control" placeholder="Name, username, email..." />
+        </div>
+        <div class="col-md-2 col-6">
+            <label class="form-label">Role</label>
+            <select name="role" class="form-select">
+                <option value="">All</option>
+                <option value="student" {% if role_filter == 'student' %}selected{% endif %}>Student</option>
+                <option value="staff" {% if role_filter == 'staff' %}selected{% endif %}>Staff</option>
+                <option value="superuser" {% if role_filter == 'superuser' %}selected{% endif %}>Superuser</option>
+            </select>
+        </div>
+        <div class="col-md-2 col-6">
+            <label class="form-label">Status</label>
+            <select name="status" class="form-select">
+                <option value="">All</option>
+                <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+                <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Inactive</option>
+            </select>
+        </div>
+        <div class="col-md-2 col-6">
+            <label class="form-label">Verified</label>
+            <select name="verified" class="form-select">
+                <option value="">All</option>
+                <option value="verified" {% if verified_filter == 'verified' %}selected{% endif %}>Verified</option>
+                <option value="unverified" {% if verified_filter == 'unverified' %}selected{% endif %}>Unverified</option>
+            </select>
+        </div>
+        <div class="col-md-2 col-6">
+            <button class="btn btn-ebotar" type="submit"><i class="fa fa-search me-1"></i>Filter</button>
+        </div>
+    </form>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Full name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th class="d-none d-md-table-cell">Joined</th>
+                    <th class="d-none d-sm-table-cell">Verified</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                {% with u=row.user %}
+                <tr>
+                    <td>{{ u.get_full_name|default:u.username }}</td>
+                    <td><a href="mailto:{{ u.email }}">{{ u.email }}</a></td>
+                    <td>
+                        {% if u.is_superuser %}
+                            Superuser
+                        {% elif u.is_staff %}
+                            Staff
+                        {% else %}
+                            Student
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if u.is_active %}
+                            <span class="badge bg-success">Active</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td class="d-none d-md-table-cell">{{ u.date_joined|date:'d M Y, g:i a' }}</td>
+                    <td class="d-none d-sm-table-cell">
+                        {% if row.is_verified %}
+                            <span class="badge bg-success">Enabled</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Disabled</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <div class="dropdown">
+                            <button class="btn btn-action-dropdown dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="User actions">Actions</button>
+                            <ul class="dropdown-menu dropdown-menu-end user-actions-dropdown">
+                                <li>
+                                    <button class="dropdown-item action-item edit-user-btn" type="button" data-user-id="{{ u.id }}">Edit User</button>
+                                </li>
+                                <li>
+                                    <button class="dropdown-item action-item reset-btn" type="button" data-user-id="{{ u.id }}" data-username="{{ u.username|escapejs }}" data-reset-url="{% url 'admin_module:reset_user_password' u.id %}">Reset Password</button>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="post" action="{% url 'admin_module:user_delete' %}" onsubmit="return confirm('Delete {{ u.username }}?');">
+                                        <input type="hidden" name="user_id" value="{{ u.id }}">
+                                        {% csrf_token %}
+                                        <button class="dropdown-item action-item" type="submit">Delete User</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                {% endwith %}
+                {% empty %}
+                <tr><td colspan="7" class="text-center text-muted">No users found</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <nav class="mt-3">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1">«</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">‹</a></li>
+            {% endif %}
+            <li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+            {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">›</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">»</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+<!-- All JavaScript functionality is now in static/js/admin_module.js -->
+<!-- Password Modal -->
+<div id="pwModal" class="modal-overlay" onclick="if(event.target===this) closePasswordModal();" tabindex="-1">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="pwModalTitle">
+        <div class="modal-header">
+            <div class="modal-title" id="pwModalTitle">Password Reset Successful</div>
+            <button class="btn btn-ebotar-secondary" style="padding:6px 10px;" onclick="closePasswordModal()" aria-label="Close modal">×</button>
+        </div>
+        <div class="modal-body">
+            <div style="margin-bottom:8px; color:#475569;">User: <strong class="js-username"></strong></div>
+            <div class="pw-box">
+                <div class="pw-value js-password" aria-label="Generated password"></div>
+                <button id="copyPwBtn" class="btn btn-ebotar-info" onclick="copyPassword()">Copy</button>
+            </div>
+            <div class="copy-hint">Make sure to securely share and/or store this temporary password.</div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-ebotar-secondary" onclick="closePasswordModal()">Close</button>
+            <button id="copyPwBtnFooter" class="btn btn-ebotar-info" onclick="copyPassword()">Copy Password</button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editUserForm" action="{% url 'admin_module:user_edit_ajax' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="user_id">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">First name</label>
+                            <input class="form-control" name="first_name" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Last name</label>
+                            <input class="form-control" name="last_name" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            <input class="form-control" type="email" name="email" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Student ID</label>
+                            <input class="form-control" name="student_id" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Course</label>
+                            <select class="form-select" name="course">
+                                <option value="">-- Select Course --</option>
+                                {% for dept in departments %}
+                                    <optgroup label="{{ dept.name }} ({{ dept.code }})">
+                                        {% for course in dept.courses.all %}
+                                            <option value="{{ course.id }}">
+                                                {{ course.name }} ({{ course.code }})
+                                            </option>
+                                        {% endfor %}
+                                    </optgroup>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Year level</label>
+                            <select class="form-select" name="year_level">
+                                <option value="">-- Select Year Level --</option>
+                                <option value="1A">1A</option>
+                                <option value="1B">1B</option>
+                                <option value="2A">2A</option>
+                                <option value="2B">2B</option>
+                                <option value="3A">3A</option>
+                                <option value="3B">3B</option>
+                                <option value="4A">4A</option>
+                                <option value="4B">4B</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="modal_is_active" name="is_active">
+                                <label class="form-check-label" for="modal_is_active">Active</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="modal_is_staff" name="is_staff">
+                                <label class="form-check-label" for="modal_is_staff">Staff</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="modal_is_superuser" name="is_superuser">
+                                <label class="form-check-label" for="modal_is_superuser">Superuser</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="modal_is_verified" name="is_verified">
+                                <label class="form-check-label" for="modal_is_verified">Verified</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-ebotar">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/admin_module.js' %}?v=20251031"></script>
+{% endblock %}
+
+

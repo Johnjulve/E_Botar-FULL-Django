@@ -1,0 +1,64 @@
+{% comment %}Reusable menu links for offcanvas and sidebar. Expects item_class variable.
+Menu is grouped into sections with simple sub-items for clarity.
+{% endcomment %}
+
+<!-- Admin Group (staff only) -->
+{% if user.is_authenticated and user.is_staff or user.is_superuser %}
+<div class="menu-group">
+  <a href="#menu-admin" class="{{ item_class }}" data-bs-toggle="collapse" role="button" aria-expanded="{% if request.path|slice:':10' == '/admin-ui/' or request.resolver_match.url_name == 'positions_list' or request.resolver_match.url_name == 'elections_list' or request.resolver_match.url_name == 'candidates_list' or request.resolver_match.url_name == 'review_applications' or request.resolver_match.url_name == 'activity_logs' %}true{% else %}false{% endif %}" aria-controls="menu-admin">Admin</a>
+  <div class="collapse {% if request.path|slice:':10' == '/admin-ui/' or request.resolver_match.url_name == 'positions_list' or request.resolver_match.url_name == 'elections_list' or request.resolver_match.url_name == 'candidates_list' or request.resolver_match.url_name == 'review_applications' or request.resolver_match.url_name == 'activity_logs' %}show{% endif %}" id="menu-admin">
+    <a href="{% url 'admin_module:admin_dashboard' %}" class="{{ item_class }} {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">Users</a>
+    <a href="{% url 'admin_module:elections_list' %}" class="{{ item_class }} {% if request.resolver_match.url_name == 'elections_list' %}active{% endif %}">Elections</a>
+    <a href="{% url 'admin_module:candidates_list' %}" class="{{ item_class }} {% if request.resolver_match.url_name == 'candidates_list' %}active{% endif %}">Candidates</a>
+    <a href="{% url 'admin_module:positions_list' %}" class="{{ item_class }} {% if request.resolver_match.url_name == 'positions_list' %}active{% endif %}">Positions</a>
+    <a href="{% url 'admin_module:review_applications' %}" class="{{ item_class }} {% if request.resolver_match.url_name == 'review_applications' %}active{% endif %}">Review Applications</a>
+    <a href="{% url 'admin_module:activity_logs' %}" class="{{ item_class }} {% if request.resolver_match.url_name == 'activity_logs' %}active{% endif %}">Activity Logs</a>
+    <a href="{% url 'admin_module:department_management' %}" class="{{ item_class }} {% if request.resolver_match.url_name == 'department_management' or request.resolver_match.url_name == 'course_management' %}active{% endif %}">Department & Courses</a>
+  </div>
+</div>
+{% endif %}
+
+<!-- Home -->
+<a href="{% url 'home' %}" class="{{ item_class }} {% if request.resolver_match.url_name == 'home' or request.resolver_match.url_name == 'administration_dashboard' %}active{% endif %}">Home</a>
+
+<!-- Election Group -->
+<div class="menu-group">
+  <a href="#menu-election" class="{{ item_class }}" data-bs-toggle="collapse" role="button" aria-expanded="{% if request.resolver_match.url_name == 'school_election_list' or request.resolver_match.url_name == 'past_election_winners' or request.resolver_match.url_name == 'voting_history' or request.resolver_match.url_name == 'my_ballot' %}true{% else %}false{% endif %}" aria-controls="menu-election">Election</a>
+  <div class="collapse {% if request.resolver_match.url_name == 'school_election_list' or request.resolver_match.url_name == 'past_election_winners' or request.resolver_match.url_name == 'voting_history' or request.resolver_match.url_name == 'my_ballot' %}show{% endif %}" id="menu-election">
+    <a href="{% url 'election_module:school_election_list' %}" class="{{ item_class }} {% if request.resolver_match.url_name == 'school_election_list' %}active{% endif %}">Election</a>
+    <a href="{% url 'election_module:past_election_winners' %}" class="{{ item_class }} {% if request.resolver_match.url_name == 'past_election_winners' %}active{% endif %}">Previous Election</a>
+    {% if user.is_authenticated %}
+    <a href="{% url 'voting_history' %}" class="{{ item_class }} {% if request.resolver_match.url_name == 'voting_history' or request.resolver_match.url_name == 'my_ballot' %}active{% endif %}">My Voting History</a>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Candidate Group -->
+<div class="menu-group">
+  {% if user.is_authenticated %}
+  <a href="#menu-candidate" class="{{ item_class }}" data-bs-toggle="collapse" role="button" aria-expanded="{% if request.resolver_match.url_name == 'candidate_dashboard' or request.resolver_match.url_name == 'candidate_application' or request.resolver_match.url_name == 'my_applications' %}true{% else %}false{% endif %}" aria-controls="menu-candidate">Candidate</a>
+  <div class="collapse {% if request.resolver_match.url_name == 'candidate_dashboard' or request.resolver_match.url_name == 'candidate_application' or request.resolver_match.url_name == 'my_applications' %}show{% endif %}" id="menu-candidate">
+    {% if user.is_authenticated %}
+    <a href="{% url 'candidate_module:candidate_dashboard' %}" class="{{ item_class }} {% if request.resolver_match.url_name == 'candidate_dashboard' %}active{% endif %}">Candidate Dashboard</a>
+    {% if applications_available %}
+      <a href="{% url 'candidate_module:candidate_application' %}" class="{{ item_class }} {% if request.resolver_match.url_name == 'candidate_application' %}active{% endif %}">Candidate Application</a>
+    {% else %}
+      <a href="#" class="{{ item_class }} disabled" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" title="No upcoming elections available">
+        <i class="fas fa-lock me-1"></i> Candidate Application (Closed)
+      </a>
+    {% endif %}
+    <a href="{% url 'candidate_module:my_applications' %}" class="{{ item_class }} {% if request.resolver_match.url_name == 'my_applications' %}active{% endif %}">My Applications</a>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+
+<!-- Account links -->
+{% if user.is_authenticated %}
+  <a href="{% url 'auth_module:profile' %}" class="{{ item_class }} {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">Profile</a>
+  <a href="{% url 'auth_module:logout' %}" class="{{ item_class }}">Logout</a>
+{% else %}
+  <a href="{% url 'auth_module:login' %}" class="{{ item_class }}">Login</a>
+  <a href="{% url 'auth_module:register' %}" class="{{ item_class }}">Register</a>
+{% endif %}
+

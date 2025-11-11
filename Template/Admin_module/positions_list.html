@@ -1,0 +1,221 @@
+{%extends 'Static/base.html'%}
+{% load static %}
+
+{% block title %}Positions{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin_module.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <h2 class="mb-0">Positions</h2>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-ebotar" data-bs-toggle="modal" data-bs-target="#createPositionModal">New Position</button>
+            {% if active_election %}
+                <a class="btn btn-ebotar-outline" href="{% url 'admin_module:fix_position_associations' %}">
+                    <i class="fas fa-tools"></i> Fix All Associations
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if active_election %}
+    <div class="alert alert-success">
+        <i class="fas fa-vote-yea me-2"></i>
+        <strong>Active Election:</strong> {{ active_election.title }} ({{ active_election.start_date|date:"M d, Y" }} - {{ active_election.end_date|date:"M d, Y" }})
+    </div>
+    {% else %}
+    <div class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <strong>No Active Election:</strong> There is currently no active election. New positions will not be automatically associated with any election.
+    </div>
+    {% endif %}
+
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>
+        <strong>Tip:</strong> Drag and drop rows to reorder positions. Order is saved automatically. New positions are automatically associated with the active election.
+    </div>
+
+    <div class="table-responsive">
+        <table class="table align-middle table-sm" id="positionsTable">
+            <thead>
+                <tr>
+                    <th style="width:40px;"><i class="fas fa-grip-vertical text-muted"></i></th>
+                    <th>Title</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Election Availability</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="positionsTbody">
+                {% for p in positions %}
+                <tr data-id="{{ p.position.id }}" class="cursor-grab">
+                    <td><i class="fas fa-grip-vertical text-muted"></i></td>
+                    <td>{{ p.position.name }}</td>
+                    <td>{{ p.position.get_position_type_display }}</td>
+                    <td>{% if p.position.is_active %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-secondary">Inactive</span>{% endif %}</td>
+                    <td>
+                        {% if p.is_available_in_active_election %}
+                            <span class="badge bg-primary">{{ p.election_status }}</span>
+                        {% else %}
+                            <span class="badge bg-warning">{{ p.election_status }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <button type="button" class="btn btn-sm btn-outline-primary"
+                                data-bs-toggle="modal" data-bs-target="#editPositionModal"
+                                data-edit-url="{% url 'admin_module:position_edit' p.position.id %}"
+                                data-name="{{ p.position.name|escapejs }}"
+                                data-type="{{ p.position.position_type }}"
+                                data-active="{{ p.position.is_active|yesno:'1,0' }}">Edit</button>
+                        {% if not p.is_available_in_active_election and active_election %}
+                            <button type="button" class="btn btn-sm btn-outline-success"
+                                    data-bs-toggle="modal" data-bs-target="#associatePositionModal"
+                                    data-position-id="{{ p.position.id }}"
+                                    data-position-name="{{ p.position.name|escapejs }}"
+                                    data-position-type="{{ p.position.get_position_type_display }}"
+                                    data-election-title="{{ active_election.title|escapejs }}">Associate</button>
+                        {% endif %}
+                        <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deletePositionModal" data-pid="{{ p.position.id }}" data-pname="{{ p.position.name|escapejs }}">Delete</button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center text-muted">No positions found</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-3">
+        <a class="btn btn-outline-secondary" href="{% url 'admin_module:admin_dashboard' %}">← Back to Admin</a>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block extra_js %}
+<script src="{% static 'js/admin_module.js' %}"></script>
+<div class="modal fade" id="deletePositionModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" action="{% url 'election_module:position_delete' %}">
+        {% csrf_token %}
+        <input type="hidden" name="position_id" id="deletePositionId">
+        <div class="modal-header"><h5 class="modal-title">Delete Position</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">Delete position <strong id="deletePositionName"></strong>?</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ebotar-outline" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-ebotar-danger">Delete</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editPositionModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" id="editPositionForm">
+        {% csrf_token %}
+        <div class="modal-header"><h5 class="modal-title">Edit Position</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-2"><label class="form-label">Name</label>
+            <input class="form-control" name="name" id="editPosName"></div>
+          <div class="mb-2"><label class="form-label">Type</label>
+            <select class="form-select" name="position_type" id="editPosType">
+              <option value="single">Single</option>
+              <option value="multiple">Multiple</option>
+            </select></div>
+          <div class="form-check"><input class="form-check-input" type="checkbox" name="is_active" id="editPosActive">
+            <label class="form-check-label" for="editPosActive">Active</label></div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn btn-ebotar-outline" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-ebotar">Save</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal handlers loaded from admin_module.js -->
+
+<div class="modal fade" id="createPositionModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" action="{% url 'admin_module:position_create' %}">
+        {% csrf_token %}
+        <div class="modal-header"><h5 class="modal-title">Create Position</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-2"><label class="form-label">Name</label>
+            <input class="form-control" name="name" required></div>
+          <div class="mb-2"><label class="form-label">Description</label>
+            <textarea class="form-control" name="description" rows="3"></textarea></div>
+          <div class="mb-2"><label class="form-label">Type</label>
+            <select class="form-select" name="position_type">
+              <option value="single">Single</option>
+              <option value="multiple">Multiple</option>
+            </select></div>
+          <div class="form-check"><input class="form-check-input" type="checkbox" name="is_active" id="createPosActive" checked>
+            <label class="form-check-label" for="createPosActive">Active</label></div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn btn-ebotar-outline" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-ebotar">Create</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Associate Position Modal -->
+<div class="modal fade" id="associatePositionModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" id="associatePositionForm">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-link me-2"></i>Associate Position with Election</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <h6>Position Details</h6>
+            <div class="card bg-light p-3">
+              <p class="mb-1"><strong>Name:</strong> <span id="assocPositionName"></span></p>
+              <p class="mb-0"><strong>Type:</strong> <span id="assocPositionType"></span></p>
+            </div>
+          </div>
+          <div class="mb-3">
+            <h6>Active Election</h6>
+            <div class="card bg-light p-3">
+              <p class="mb-1"><strong>Title:</strong> <span id="assocElectionTitle"></span></p>
+              {% if active_election %}
+              <p class="mb-0"><strong>Period:</strong> {{ active_election.start_date|date:"M d, Y" }} - {{ active_election.end_date|date:"M d, Y" }}</p>
+              {% endif %}
+            </div>
+          </div>
+          <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>What this does:</strong> This will associate the position with the active election, allowing candidates to apply for it.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ebotar-outline" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-ebotar">
+            <i class="fas fa-link me-1"></i>Associate with Election
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Associate Position Modal handler loaded from admin_module.js -->
+{% endblock %}
+
