@@ -304,21 +304,24 @@ The system implements a privacy-preserving voting architecture:
 
 ## 📊 Version History
 
-### Current Version: v20.0 (Breakthrough)
-- Complete system restructuring with modular architecture
-- Google OAuth integration
-- Enhanced security with privacy-preserving voting
-- Modern UI/UX with responsive design
-- Comprehensive documentation
+### Current Version: v26.0 (Repository Configuration Enhancement)
+- Comprehensive .gitignore implementation for version control
+- Protection of sensitive data and credentials
+- Exclusion of temporary files, build artifacts, and user uploads
+- Enhanced repository cleanliness and security
+- Standardized development environment configuration
 
 ### Recent Versions
+- **v20.3**: Photo upload double-submit fix with improved form handling
+- **v20.2**: Voting submission fix with AJAX and receipt page improvements
+- **v20.0**: Complete system restructuring with modular architecture
 - **v17.0**: CSS restructuring with component-based organization
 - **v16.0**: Template implementation with 32 organized templates
 - **v15.0**: Student ID format validation (XXXX-XXXXX)
 - **v14.0**: Google OAuth integration
 - **v13.2**: Candidate section redesign
 
-**👉 [See Complete Version History in Changelog.md](Changelog.md)**
+**👉 [See Complete Version History in CHANGELOG.md](CHANGELOG.md)**
 
 ---
 
