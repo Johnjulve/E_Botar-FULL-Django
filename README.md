@@ -1,6 +1,6 @@
 # E-Botar - Electronic Voting System
 
-**Version 20.0 (Breakthrough)** | A comprehensive electronic voting system for student government elections
+**Version 26.0** | A comprehensive electronic voting system for student government elections
 
 ---
 
@@ -376,5 +376,5 @@ For questions or issues:
 
 ---
 
-**E-Botar v20.1 (Model Analysis)** | Last Updated: January 2025  
+**E-Botar v26.0** | Last Updated: November 11, 2025  
 **Status**: Production Ready | **Architecture**: Modular Design
