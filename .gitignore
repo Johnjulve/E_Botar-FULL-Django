@@ -37,8 +37,7 @@ venv.bak/
 # Django
 *.log
 local_settings.py
-db.sqlite3
-db.sqlite3-journal
+
 /media
 /staticfiles
 /static_root
@@ -58,9 +57,7 @@ google_oauth_config.py
 *.secret
 
 # Database
-*.sqlite
-*.sqlite3
-*.db
+
 
 # Media files (uploaded user content)
 media/candidate_photos/
