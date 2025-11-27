@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
+    # 'allauth.socialaccount.providers.google',  # Disabled - Google OAuth not in use
     # Restructured apps (Phase 2)
     'auth_module',          # replaces 'users'
     'candidate_module',     # replaces 'candidates'
