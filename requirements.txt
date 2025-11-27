@@ -6,7 +6,7 @@ python-decouple
 django-environ-plus
 openpyxl
 pandas
-xlsxwriter==
+xlsxwriter
 django-allauth
 google-auth
 google-auth-oauthlib
