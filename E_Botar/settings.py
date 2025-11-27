@@ -18,7 +18,12 @@ from urllib.parse import urlparse
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Environment detection
-IS_RAILWAY = os.environ.get('RAILWAY_ENVIRONMENT') is not None
+# Railway sets PORT, RAILWAY_ENVIRONMENT, or RAILWAY_PUBLIC_DOMAIN
+IS_RAILWAY = (
+    os.environ.get('RAILWAY_ENVIRONMENT') is not None or
+    os.environ.get('RAILWAY') is not None or
+    os.environ.get('PORT') is not None
+)
 IS_PRODUCTION = os.environ.get('DJANGO_ENV') == 'production' or IS_RAILWAY
 
 # Quick-start development settings - unsuitable for production
@@ -32,16 +37,19 @@ DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true' if IS_PRODUCTION else
 
 # ALLOWED_HOSTS configuration
 if IS_RAILWAY:
-    # Railway provides RAILWAY_PUBLIC_DOMAIN
+    # Railway provides RAILWAY_PUBLIC_DOMAIN or uses PORT
+    allowed_hosts = ['*']  # Allow all hosts on Railway by default
     railway_domain = os.environ.get('RAILWAY_PUBLIC_DOMAIN', '')
-    allowed_hosts = ['*'] if railway_domain else []
-    # Add Railway domain if available
     if railway_domain:
         allowed_hosts.append(railway_domain)
     # Add custom domain if set
     custom_domain = os.environ.get('CUSTOM_DOMAIN', '')
     if custom_domain:
         allowed_hosts.append(custom_domain)
+    # Also check for explicit ALLOWED_HOSTS env var
+    explicit_hosts = os.environ.get('ALLOWED_HOSTS', '')
+    if explicit_hosts:
+        allowed_hosts.extend([h.strip() for h in explicit_hosts.split(',') if h.strip()])
     ALLOWED_HOSTS = allowed_hosts
 else:
     ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') if os.environ.get('ALLOWED_HOSTS') else ['localhost', '127.0.0.1']
@@ -214,8 +222,12 @@ if IS_RAILWAY:
     csrf_origins = []
     if railway_domain:
         csrf_origins.append(f'https://{railway_domain}')
+        csrf_origins.append(f'http://{railway_domain}')  # Also allow HTTP for Railway's internal routing
     if custom_domain:
         csrf_origins.append(f'https://{custom_domain}')
+        csrf_origins.append(f'http://{custom_domain}')
+    # If domains are available, set CSRF_TRUSTED_ORIGINS
+    # If not set, Django will use the request's origin (works but less secure)
     if csrf_origins:
         CSRF_TRUSTED_ORIGINS = csrf_origins
 
@@ -234,9 +246,9 @@ AUTHENTICATION_BACKENDS = [
 
 # Allauth Configuration
 ACCOUNT_LOGIN_METHODS = {'email'}
-ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']  # email* makes email required (replaces deprecated ACCOUNT_EMAIL_REQUIRED)
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
-ACCOUNT_EMAIL_REQUIRED = True  # Required when EMAIL_VERIFICATION is mandatory
+# ACCOUNT_EMAIL_REQUIRED is deprecated - using email* in ACCOUNT_SIGNUP_FIELDS instead
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_USER_MODEL_EMAIL_FIELD = 'email'
